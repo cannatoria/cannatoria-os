@@ -5,19 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cannatoria OS | V2 Enterprise</title>
+    <title>Cannatoria OS | V3 Enterprise</title>
     <style>
         :root { 
-            --green: #00897b; 
-            --bg: #0a0a0a; 
-            --card: #141414; 
-            --text: #fff; 
-            --sub: #888; 
-            --border: #222; 
-            /* Zone Colors */
-            --color-prop: #00b4d8; 
-            --color-veg: #00e676; 
-            --color-flower: #ff9800; 
+            --green: #00897b; --bg: #0a0a0a; --card: #141414; --text: #fff; --sub: #888; --border: #222; 
+            --color-prop: #00b4d8; --color-veg: #00e676; --color-flower: #ff9800; --warning: #ffcc00;
         }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; user-select: none; }
         
@@ -29,35 +21,33 @@
         .view { display: none; padding: 20px; padding-bottom: 50px; }
         .view.active { display: block; }
 
-        /* Login Screen */
-        .login-box { margin-top: 80px; }
+        /* Inputs & Buttons */
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 5px; text-transform: uppercase; }
         .input-group input { width: 100%; box-sizing: border-box; background: var(--card); border: 1px solid var(--border); color: #fff; padding: 15px; border-radius: 8px; font-size: 16px; outline: none; }
         .input-group input:focus { border-color: var(--green); }
-        .btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .input-inline { background: #000; border: 1px solid #333; color: #fff; padding: 5px; width: 60px; text-align: right; border-radius: 4px; font-family: monospace; }
         
-        /* Cards & UI */
+        .btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-action { width: 100%; padding: 12px; font-size: 12px; font-weight: bold; border-radius: 6px; margin-top: 15px; border: none; cursor: pointer; text-transform: uppercase; }
+        .btn-edit { background: transparent; border: 1px solid var(--sub); color: var(--text); padding: 6px 12px; font-size: 10px; border-radius: 4px; cursor: pointer; float: right; margin-top: -5px; }
+
+        /* UI Cards */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
         .big-num { font-size: 32px; font-weight: 800; margin: 5px 0; color: #fff; }
         .label { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
         .flex-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
         .flex-row:last-child { border: none; padding-bottom: 0; }
-        
-        .room-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #000; }
         
-        /* Dynamic Button Styles */
-        .btn-action { width: 100%; padding: 12px; font-size: 12px; font-weight: bold; border-radius: 6px; margin-top: 15px; border: none; cursor: pointer; text-transform: uppercase; }
-        
-        /* Financial Table */
-        .cogs-table { width: 100%; font-size: 13px; margin-top: 10px; border-collapse: collapse; }
-        .cogs-table td { padding: 8px 0; border-bottom: 1px solid #222; }
-        .cogs-table tr:last-child td { border-bottom: none; font-weight: bold; font-size: 15px; color: var(--green); }
-        .val-right { text-align: right; font-family: monospace; }
-        
+        .date-text { font-family: monospace; font-size: 12px; color: var(--sub); }
         .history-list { font-size: 12px; }
         .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #222; }
+        
+        /* Financial Table */
+        .cogs-table { width: 100%; font-size: 13px; margin-top: 15px; border-collapse: collapse; }
+        .cogs-table td { padding: 10px 0; border-bottom: 1px solid #222; }
+        .cogs-table tr:last-child td { border-bottom: none; font-weight: bold; font-size: 15px; color: var(--green); }
     </style>
 </head>
 <body>
@@ -71,131 +61,218 @@
     </div>
 
     <div id="view-login" class="view active">
-        <div class="login-box">
+        <div class="login-box" style="margin-top: 60px;">
             <h2 style="margin-top: 0; margin-bottom: 5px;">System Access</h2>
             <div class="input-group"><label>Username</label><input type="text" id="username" autocapitalize="none"></div>
             <div class="input-group"><label>Security Key</label><input type="password" id="password"></div>
             <button class="btn" onclick="attemptLogin()">Authenticate</button>
+            <div id="login-error" style="color: #ff3b30; font-size: 12px; margin-top: 10px; display: none; text-align: center;">Invalid credentials.</div>
             <button onclick="resetData()" style="margin-top: 40px; background: none; border: none; color: #444; font-size: 10px; text-decoration: underline; width: 100%;">Reset Database (Pitch Prep)</button>
         </div>
     </div>
 
     <div id="view-owner" class="view">
         <div class="card">
-            <div class="label">Annual Yield Projection (Live)</div>
-            <div class="big-num" id="owner-projection">0 <span style="font-size: 16px; color: var(--sub);">kg</span></div>
-            <div class="label" style="color: var(--green);">Facility Cap: 5,000 kg (5 Tons)</div>
+            <div class="label">Target Facility Capacity</div>
+            <div class="big-num" style="color: var(--green);">1,001 <span style="font-size: 16px; color: var(--sub);">kg (1 Ton)</span></div>
+            <div class="label">Projected Yield Based on SOPs</div>
         </div>
 
         <div class="card">
-            <div class="label" style="color: #fff;">Cost of Goods Sold (COGS) Breakdown</div>
+            <div class="label" style="display: inline-block;">Cost of Production (COGS) Editor</div>
+            <button class="btn-edit" onclick="toggleEditCOGS()" id="edit-btn">Edit Inputs</button>
+            
             <table class="cogs-table">
-                <tr><td>Seasonal Labor Impact</td><td class="val-right" style="color: #ffcc00;">$120 / kg</td></tr>
-                <tr><td>Nutrients & Crop Steering Inputs</td><td class="val-right" style="color: var(--color-prop);">$95 / kg</td></tr>
-                <tr><td>Facility Overhead (Lights, HVAC)</td><td class="val-right">$432 / kg</td></tr>
-                <tr><td>Total Production Cost</td><td class="val-right">$647 / kg</td></tr>
+                <tr>
+                    <td>Seasonal Labor Impact</td>
+                    <td style="text-align: right;">$<span id="val-labor">120</span> <input type="number" id="inp-labor" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Nutrients & Inputs</td>
+                    <td style="text-align: right; color: var(--color-prop);">$<span id="val-nutes">95</span> <input type="number" id="inp-nutes" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Power & Utilities</td>
+                    <td style="text-align: right;">$<span id="val-power">432</span> <input type="number" id="inp-power" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Total COGS per kg</td>
+                    <td style="text-align: right;">$<span id="val-total">647</span></td>
+                </tr>
             </table>
-            <div style="margin-top: 10px; font-size: 11px; color: var(--sub);">*Consultant fee optimization active. Reduced from $989/kg baseline.</div>
         </div>
 
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Harvest Ledger</h3>
-        <div class="card" id="harvest-history">
-            </div>
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Harvest Ledger & Micro-Metrics</h3>
+        <div class="card" id="harvest-history"></div>
 
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">Live Canopy Status</h3>
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">Live Facility Pipeline</h3>
         <div id="owner-rooms-list"></div>
     </div>
 
     <div id="view-tech" class="view">
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Pipeline Control Engine</h3>
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Heartbeat Execution Engine</h3>
         <div id="tech-rooms-list"></div>
-        <button class="btn" style="background: transparent; border: 1px dashed var(--color-prop); color: var(--color-prop);" onclick="spawnClones()">+ Log New Clone Batch</button>
+        <button class="btn" style="background: transparent; border: 1px dashed var(--color-prop); color: var(--color-prop);" onclick="spawnClones()">+ Log New Clone Batch (300-450 Plants)</button>
     </div>
 
     <script>
-        // --- DATABASE & LOGIC ---
+        // --- CALENDAR ENGINE ---
+        // Anchored to April 26, 2026
+        const systemDate = new Date("2026-04-26T12:00:00Z");
+        
+        function formatDate(dateString) {
+            const options = { month: 'short', day: 'numeric', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        function calculateTargetDate(daysToAdd) {
+            let d = new Date(systemDate);
+            d.setDate(d.getDate() + daysToAdd);
+            return d.toISOString();
+        }
+
+        function getDaysBetween(targetDateIso) {
+            let target = new Date(targetDateIso);
+            let diffTime = target - systemDate;
+            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        // --- DATABASE ---
         let db = {
+            currentUser: null,
             stats: { totalYield: 0, harvestCount: 0 },
-            history: [], // Stores harvest ledger
+            financials: { labor: 120, nutes: 95, power: 432 },
+            history: [],
             rooms: [
-                { id: "f1", name: "Flower 1", batch: "B-01", type: "flower", daysLeft: 10, color: "var(--color-flower)" },
-                { id: "f2", name: "Flower 2", batch: "B-02", type: "flower", daysLeft: 24, color: "var(--color-flower)" },
-                { id: "f3", name: "Flower 3", batch: "B-03", type: "flower", daysLeft: 38, color: "var(--color-flower)" },
-                { id: "f4", name: "Flower 4", batch: "B-04", type: "flower", daysLeft: 52, color: "var(--color-flower)" },
-                { id: "f5", name: "Flower 5", batch: "B-05", type: "flower", daysLeft: 66, color: "var(--color-flower)" },
-                { id: "vA", name: "Veg Space A", batch: "B-06", type: "veg", daysLeft: 4, color: "var(--color-veg)" },
-                { id: "vB", name: "Veg Space B", batch: "B-07", type: "veg", daysLeft: 18, color: "var(--color-veg)" },
-                { id: "prop", name: "Propagation", batch: "B-08", type: "prop", daysLeft: 10, color: "var(--color-prop)" }
+                { id: "f1", name: "Flower 1", batch: "B-01", type: "flower", plants: 350, targetDate: calculateTargetDate(10), color: "var(--color-flower)" },
+                { id: "f2", name: "Flower 2", batch: "B-02", type: "flower", plants: 380, targetDate: calculateTargetDate(24), color: "var(--color-flower)" },
+                { id: "f3", name: "Flower 3", batch: "B-03", type: "flower", plants: 400, targetDate: calculateTargetDate(38), color: "var(--color-flower)" },
+                { id: "f4", name: "Flower 4", batch: "B-04", type: "flower", plants: 420, targetDate: calculateTargetDate(52), color: "var(--color-flower)" },
+                { id: "f5", name: "Flower 5", batch: "B-05", type: "flower", plants: 390, targetDate: calculateTargetDate(66), color: "var(--color-flower)" },
+                { id: "vA", name: "Veg Space A", batch: "B-06", type: "veg", plants: 400, targetDate: calculateTargetDate(4), color: "var(--color-veg)" },
+                { id: "vB", name: "Veg Space B", batch: "B-07", type: "veg", plants: 410, targetDate: calculateTargetDate(18), color: "var(--color-veg)" },
+                { id: "prop", name: "Propagation", batch: "B-08", type: "prop", plants: 450, targetDate: calculateTargetDate(10), color: "var(--color-prop)" }
             ],
             nextBatchNum: 9
         };
 
-        function loadData() {
-            const saved = localStorage.getItem('cannatoriaV2');
+        function initApp() {
+            const saved = localStorage.getItem('cannatoriaV3');
             if (saved) { db = JSON.parse(saved); }
             else { saveData(); }
+
+            // Session Persistence
+            if (db.currentUser === 'boss') { routeOwner(); }
+            else if (db.currentUser === 'crew') { routeTech(); }
+            else { showView('login', 'Authentication'); }
         }
 
-        function saveData() { localStorage.setItem('cannatoriaV2', JSON.stringify(db)); }
-        
-        function resetData() {
-            localStorage.removeItem('cannatoriaV2');
-            alert("System Purged. Ready for Pitch.");
-            location.reload();
-        }
+        function saveData() { localStorage.setItem('cannatoriaV3', JSON.stringify(db)); }
+        function resetData() { localStorage.removeItem('cannatoriaV3'); alert("Reset Complete."); location.reload(); }
 
+        // --- AUTH ---
         function attemptLogin() {
             const user = document.getElementById('username').value.toLowerCase();
             const pass = document.getElementById('password').value.toLowerCase();
-            loadData();
-            if (user === 'boss') { renderOwner(); showView('owner', 'Investor CFO View'); }
-            else if (user === 'crew') { renderTech(); showView('tech', 'Flight Crew Command'); }
-        }
-
-        function showView(viewId, title) {
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            document.getElementById('header-subtitle').innerText = title;
-            document.getElementById('logoutBtn').style.display = 'block';
+            if (user === 'boss' && pass === 'roi') { db.currentUser = 'boss'; saveData(); routeOwner(); }
+            else if (user === 'crew' && pass === '1gw') { db.currentUser = 'crew'; saveData(); routeTech(); }
+            else { document.getElementById('login-error').style.display = 'block'; }
         }
 
         function logout() {
+            db.currentUser = null; saveData();
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById('view-login').classList.add('active');
             document.getElementById('header-subtitle').innerText = 'Authentication';
             document.getElementById('logoutBtn').style.display = 'none';
         }
 
-        // --- OWNER DASHBOARD ---
+        function showView(viewId, title) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            document.getElementById('header-subtitle').innerText = title;
+            if(viewId !== 'login') document.getElementById('logoutBtn').style.display = 'block';
+        }
+
+        function routeOwner() { renderOwner(); showView('owner', 'Investor CFO View'); }
+        function routeTech() { renderTech(); showView('tech', 'Flight Crew Command'); }
+
+        // --- OWNER FINANCIALS ---
+        let editingCOGS = false;
+        function toggleEditCOGS() {
+            editingCOGS = !editingCOGS;
+            const btn = document.getElementById('edit-btn');
+            
+            if (editingCOGS) {
+                btn.innerText = "Save Inputs";
+                btn.style.color = "var(--green)";
+                document.getElementById('val-labor').style.display = 'none';
+                document.getElementById('inp-labor').style.display = 'inline-block';
+                document.getElementById('inp-labor').value = db.financials.labor;
+                
+                document.getElementById('val-nutes').style.display = 'none';
+                document.getElementById('inp-nutes').style.display = 'inline-block';
+                document.getElementById('inp-nutes').value = db.financials.nutes;
+                
+                document.getElementById('val-power').style.display = 'none';
+                document.getElementById('inp-power').style.display = 'inline-block';
+                document.getElementById('inp-power').value = db.financials.power;
+            } else {
+                btn.innerText = "Edit Inputs";
+                btn.style.color = "var(--text)";
+                
+                db.financials.labor = parseFloat(document.getElementById('inp-labor').value) || 0;
+                db.financials.nutes = parseFloat(document.getElementById('inp-nutes').value) || 0;
+                db.financials.power = parseFloat(document.getElementById('inp-power').value) || 0;
+                saveData();
+                renderOwner();
+            }
+        }
+
         function renderOwner() {
-            let avgYield = db.stats.harvestCount > 0 ? (db.stats.totalYield / db.stats.harvestCount) : 40.5; 
-            let annualProj = avgYield * 26 * 5; // 26 weeks * 5 rooms approximation for scale visual
+            // Update COGS
+            document.getElementById('val-labor').innerText = db.financials.labor;
+            document.getElementById('val-nutes').innerText = db.financials.nutes;
+            document.getElementById('val-power').innerText = db.financials.power;
+            document.getElementById('val-total').innerText = (db.financials.labor + db.financials.nutes + db.financials.power).toFixed(2);
+            document.getElementById('inp-labor').style.display = 'none';
+            document.getElementById('inp-nutes').style.display = 'none';
+            document.getElementById('inp-power').style.display = 'none';
+            document.getElementById('val-labor').style.display = 'inline';
+            document.getElementById('val-nutes').style.display = 'inline';
+            document.getElementById('val-power').style.display = 'inline';
 
-            document.getElementById('owner-projection').innerHTML = `${Math.round(annualProj).toLocaleString()} <span style="font-size: 16px; color: var(--sub);">kg</span>`;
-
-            // Render History Ledger
+            // History
             let histHtml = '<div class="history-list">';
             if(db.history.length === 0) { histHtml += '<div style="color:#555; font-style:italic;">No harvests logged yet.</div>'; }
             db.history.slice().reverse().forEach(h => {
                 histHtml += `<div class="history-item">
-                    <div><strong style="color:var(--color-flower)">${h.room}</strong> <span style="color:#888;">(${h.batch})</span></div>
-                    <div style="font-family:monospace; font-weight:bold;">+${h.weight} kg</div>
+                    <div>
+                        <strong style="color:var(--color-flower)">${h.room}</strong> <span style="color:#888;">(${h.batch})</span><br>
+                        <span style="font-size: 10px; color: var(--sub);">Avg: ${h.ypp}g per plant (${h.plants} plants)</span>
+                    </div>
+                    <div style="font-family:monospace; font-weight:bold; text-align:right;">+${h.weight} kg<br><span style="font-size:10px; color:var(--sub);">${formatDate(h.date)}</span></div>
                 </div>`;
             });
             histHtml += '</div>';
             document.getElementById('harvest-history').innerHTML = histHtml;
 
-            // Render Rooms
+            // Rooms
             let html = '';
             db.rooms.forEach(r => {
                 if(r.batch) {
+                    let days = getDaysBetween(r.targetDate);
                     html += `
                     <div class="flex-row">
                         <div style="border-left: 3px solid ${r.color}; padding-left: 10px;">
-                            <div style="font-weight: bold; font-size: 14px; color: ${r.color};">${r.name}</div>
+                            <div style="font-weight: bold; font-size: 14px; color: ${r.color};">${r.name} <span style="font-size:11px; color:#fff; font-weight:normal;">(${r.plants} Plants)</span></div>
                             <div style="font-size: 11px; color: var(--sub);">Batch: ${r.batch}</div>
                         </div>
-                        <div class="val">${r.daysLeft} Days</div>
+                        <div style="text-align:right;">
+                            <div style="font-family:monospace; font-weight:bold; font-size:14px;">${days} Days</div>
+                            <div class="date-text">${formatDate(r.targetDate)}</div>
+                        </div>
                     </div>`;
                 }
             });
@@ -207,68 +284,107 @@
             let html = '';
             db.rooms.forEach(r => {
                 html += `<div class="card" style="border-top: 3px solid ${r.batch ? r.color : '#333'};">
-                    <div class="room-title" style="color: ${r.batch ? r.color : '#555'};">${r.name}</div>`;
+                    <div class="flex-row" style="border:none; padding:0; margin-bottom:5px;">
+                        <div style="font-weight:bold; font-size:16px; color: ${r.batch ? r.color : '#555'};">${r.name}</div>
+                        ${r.batch ? `<div style="font-size:12px; color:var(--sub);">${r.plants} Plants</div>` : ''}
+                    </div>`;
                 
                 if (r.batch) {
+                    let days = getDaysBetween(r.targetDate);
+                    let isReady = days <= 0;
+                    
                     html += `
                     <div class="flex-row" style="border: none; padding-bottom: 5px;">
                         <span class="badge" style="background: ${r.color};">${r.batch}</span>
-                        <span class="val" style="font-size: 12px;">${r.daysLeft} Days</span>
+                        <div style="text-align:right;">
+                            <span class="val" style="font-size: 12px; color: ${isReady ? 'var(--warning)' : '#fff'};">${isReady ? 'READY' : days + ' Days Left'}</span><br>
+                            <span class="date-text">${formatDate(r.targetDate)}</span>
+                        </div>
                     </div>`;
                     
                     if (r.type === 'flower') {
-                        html += `<button class="btn-action" style="background: var(--color-flower); color: #000;" onclick="harvestRoom('${r.id}', '${r.name}', '${r.batch}')">Cut & Weigh Harvest</button>`;
+                        html += `<button class="btn-action" style="background: var(--color-flower); color: #000;" onclick="harvestRoom('${r.id}', '${r.name}', '${r.batch}', ${r.plants}, ${days})">Cut & Log Harvest Weight</button>`;
                     } else if (r.type === 'veg') {
-                        html += `<button class="btn-action" style="background: var(--color-veg); color: #000;" onclick="moveBatch('${r.id}', 'flower')">Flip to Empty Flower</button>`;
+                        html += `<button class="btn-action" style="background: var(--color-veg); color: #000;" onclick="moveBatch('${r.id}', 'flower', ${days})">Flip to Empty Flower Room</button>`;
                     } else if (r.type === 'prop') {
-                        html += `<button class="btn-action" style="background: var(--color-prop); color: #000;" onclick="moveBatch('${r.id}', 'veg')">Transfer to Empty Veg</button>`;
+                        html += `<button class="btn-action" style="background: var(--color-prop); color: #000;" onclick="moveBatch('${r.id}', 'veg', ${days})">Transfer to Empty Veg Space</button>`;
                     }
                 } else {
-                    html += `<div style="color: #555; font-size: 12px; font-style: italic;">Awaiting next batch sequence.</div>`;
+                    html += `<div style="color: #555; font-size: 12px; font-style: italic;">Cleaned. Awaiting next cycle.</div>`;
                 }
                 html += `</div>`;
             });
             document.getElementById('tech-rooms-list').innerHTML = html;
         }
 
-        // --- SYSTEM ACTIONS ---
-        function harvestRoom(roomId, roomName, batchName) {
+        // --- HEARTBEAT SYSTEM ACTIONS ---
+        function checkHeartbeat(daysLeft) {
+            if (daysLeft > 0) {
+                return confirm(`HEARTBEAT LOCK ALERT: This batch has ${daysLeft} days remaining in its cycle. Moving it now breaks the 2-week perpetual rhythm. Override and proceed anyway?`);
+            }
+            return true;
+        }
+
+        function harvestRoom(roomId, roomName, batchName, plants, daysLeft) {
+            if (!checkHeartbeat(daysLeft)) return;
+
             let weight = prompt(`Final Dry Weight (KG) for ${roomName} (${batchName}):`, "42.5");
             if (weight && !isNaN(weight)) {
-                db.stats.totalYield += parseFloat(weight);
+                let w = parseFloat(weight);
+                db.stats.totalYield += w;
                 db.stats.harvestCount += 1;
                 
-                // Add to history ledger
-                db.history.push({ room: roomName, batch: batchName, weight: parseFloat(weight).toFixed(1) });
+                // Micro-metric: Grams per plant calculation
+                let gramsTotal = w * 1000;
+                let ypp = (gramsTotal / plants).toFixed(1);
+                
+                db.history.push({ room: roomName, batch: batchName, weight: w.toFixed(1), plants: plants, ypp: ypp, date: new Date().toISOString() });
                 
                 let room = db.rooms.find(r => r.id === roomId);
-                room.batch = null; room.daysLeft = 0;
+                room.batch = null; room.targetDate = null; room.plants = 0;
                 
                 saveData(); renderTech();
+                alert(`Success: ${w}kg logged. Efficiency: ${ypp}g per plant.`);
             }
         }
 
-        function moveBatch(fromRoomId, targetType) {
+        function moveBatch(fromRoomId, targetType, daysLeft) {
+            if (!checkHeartbeat(daysLeft)) return;
+
             let fromRoom = db.rooms.find(r => r.id === fromRoomId);
             let emptyTarget = db.rooms.find(r => r.type === targetType && !r.batch);
             
-            if (!emptyTarget) {
-                alert(`System Alert: All ${targetType.toUpperCase()} rooms are full. Clear a room first.`);
-                return;
-            }
+            if (!emptyTarget) { alert(`System Alert: All ${targetType.toUpperCase()} rooms are full. Clear a room first.`); return; }
+            
             emptyTarget.batch = fromRoom.batch;
-            emptyTarget.daysLeft = targetType === 'flower' ? 70 : 28; 
-            fromRoom.batch = null; fromRoom.daysLeft = 0;
+            emptyTarget.plants = fromRoom.plants;
+            
+            // Set precise calendar target
+            let daysToNext = targetType === 'flower' ? 70 : 28; 
+            emptyTarget.targetDate = calculateTargetDate(daysToNext);
+            
+            fromRoom.batch = null; fromRoom.targetDate = null; fromRoom.plants = 0;
             saveData(); renderTech();
         }
 
         function spawnClones() {
             let propRoom = db.rooms.find(r => r.type === 'prop');
             if (propRoom.batch) { alert("System Alert: Propagation is currently full."); return; }
+            
+            let pCount = prompt("Enter Plant Count for new batch (Recommended: 300-450):", "350");
+            if(!pCount || isNaN(pCount)) return;
+
             let batchStr = "B-" + (db.nextBatchNum < 10 ? "0" + db.nextBatchNum : db.nextBatchNum);
-            propRoom.batch = batchStr; propRoom.daysLeft = 14; db.nextBatchNum++;
+            propRoom.batch = batchStr; 
+            propRoom.plants = parseInt(pCount);
+            propRoom.targetDate = calculateTargetDate(14); 
+            db.nextBatchNum++;
+            
             saveData(); renderTech();
         }
+
+        // Boot
+        window.onload = initApp;
     </script>
 </body>
 </html>

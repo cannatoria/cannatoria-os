@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cannatoria OS</title>
+    <title>Cannatoria OS | Live Engine</title>
     <style>
-        :root { --green: #00897b; --bg: #0a0a0a; --card: #141414; --text: #fff; --sub: #888; --border: #222; }
+        :root { --green: #00897b; --bg: #0a0a0a; --card: #141414; --text: #fff; --sub: #888; --border: #222; --warning: #ffcc00; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; user-select: none; }
         
         .header { padding: 40px 20px 20px; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
@@ -24,25 +24,23 @@
         .input-group label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 5px; text-transform: uppercase; }
         .input-group input { width: 100%; box-sizing: border-box; background: var(--card); border: 1px solid var(--border); color: #fff; padding: 15px; border-radius: 8px; font-size: 16px; outline: none; }
         .input-group input:focus { border-color: var(--green); }
-        .btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-outline { background: transparent; border: 1px dashed var(--green); color: var(--green); }
+        .btn-action { background: #222; border: 1px solid #444; padding: 8px; font-size: 11px; margin-top: 10px; }
+        .btn-harvest { background: var(--green); border: none; color: #fff; }
         .error { color: #ff3b30; font-size: 12px; margin-top: 10px; text-align: center; display: none; }
 
-        /* Shared Components */
+        /* Cards & UI */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
         .big-num { font-size: 32px; font-weight: 800; color: var(--green); margin: 5px 0; }
-        .label { font-size: 12px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        .label { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
         .flex-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
         .flex-row:last-child { border: none; padding-bottom: 0; }
-        .val { font-family: monospace; font-size: 16px; font-weight: bold; }
+        .val { font-family: monospace; font-size: 14px; font-weight: bold; }
         .badge { background: #1a1a1a; padding: 4px 8px; border-radius: 4px; font-size: 10px; color: var(--sub); }
-        .badge.active { color: var(--green); border: 1px solid rgba(0, 137, 123, 0.3); }
-
-        /* Timeline Specific */
-        .timeline-item { border-left: 2px solid #333; padding-left: 15px; margin-left: 5px; position: relative; margin-bottom: 20px; }
-        .timeline-item::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #333; }
-        .timeline-item.active::before { background: var(--green); box-shadow: 0 0 8px var(--green); }
-        .batch-title { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
-        .batch-sub { font-size: 11px; color: var(--sub); }
+        
+        .room-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; color: var(--green); }
+        .status-empty { color: #555; font-style: italic; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -58,128 +56,86 @@
     <div id="view-login" class="view active">
         <div class="login-box">
             <h2 style="margin-top: 0; margin-bottom: 5px;">System Access</h2>
-            <p style="color: var(--sub); font-size: 14px; margin-bottom: 30px;">Please enter your credentials to access your designated workspace.</p>
-            
-            <div class="input-group">
-                <label>Username</label>
-                <input type="text" id="username" autocapitalize="none">
-            </div>
-            <div class="input-group">
-                <label>Security Key</label>
-                <input type="password" id="password">
-            </div>
+            <div class="input-group"><label>Username</label><input type="text" id="username" autocapitalize="none"></div>
+            <div class="input-group"><label>Security Key</label><input type="password" id="password"></div>
             <button class="btn" onclick="attemptLogin()">Authenticate</button>
-            <div class="error" id="login-error">Invalid credentials. Access denied.</div>
+            <div class="error" id="login-error">Invalid credentials.</div>
             
-            <div style="margin-top: 40px; border: 1px solid #333; padding: 15px; border-radius: 8px; font-size: 11px; color: #555;">
-                <strong>Pitch Guide:</strong><br>
-                Owner: boss / roi<br>
-                Consultant: crew / 1gw<br>
-                Worker: floor / sop
-            </div>
+            <button onclick="resetData()" style="margin-top: 50px; background: none; border: none; color: #444; font-size: 10px; text-decoration: underline;">Reset App Data (Pitch Prep)</button>
         </div>
     </div>
 
     <div id="view-owner" class="view">
         <div class="card">
-            <div class="label">Live Profit Margin Target</div>
-            <div class="big-num" id="sim-margin">65.4%</div>
-            <div class="label" style="color: var(--green);">Optimized Operations Live</div>
+            <div class="label">Annual Yield Projection (Based on Harvests)</div>
+            <div class="big-num" id="owner-projection">0 <span style="font-size: 16px; color: var(--sub);">kg</span></div>
+            <div class="label" style="color: var(--green);">Target: 1,000 kg (1 Ton)</div>
         </div>
         <div class="card">
-            <div class="label">Cost of Goods Sold (COGS) KPI</div>
-            <div class="big-num" style="color: #fff;">$647 <span style="font-size: 16px; color: var(--sub);">/ kg</span></div>
-            <div class="label">Target Achieved (Down from $989)</div>
+            <div class="label">Average Yield Per Room</div>
+            <div class="big-num" id="owner-avg-yield" style="color: #fff;">0 <span style="font-size: 16px; color: var(--sub);">kg</span></div>
         </div>
-        <div class="card">
-            <div class="label">Facility Yield Projection</div>
-            <div class="big-num" style="color: #fff;">1.08 <span style="font-size: 16px; color: var(--sub);">g/W</span></div>
-            <div class="label">On track for 5-Ton Annual Run Rate</div>
-        </div>
+
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">Live Facility Status</h3>
+        <div id="owner-rooms-list"></div>
     </div>
 
     <div id="view-tech" class="view">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-            <div class="card" style="margin: 0; padding: 15px;">
-                <div class="label">Prod. Cost</div>
-                <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">$647<span style="font-size: 12px; color: var(--sub);">/kg</span></div>
-            </div>
-            <div class="card" style="margin: 0; padding: 15px;">
-                <div class="label">Avg Yield</div>
-                <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: var(--green);">1.08<span style="font-size: 12px; color: var(--sub);">g/W</span></div>
-            </div>
-        </div>
-
-        <div class="card" style="border-left: 4px solid #ffcc00; background: rgba(255, 204, 0, 0.05);">
-            <div style="font-weight: bold; margin-bottom: 10px; color: #ffcc00; font-size: 14px;">Sensor Alert: Room 3 (Bulking)</div>
-            <div class="flex-row" style="border-color: rgba(255, 204, 0, 0.2);"><span class="label">Live Temp</span><span class="val" id="sim-temp-warn" style="color: #ffcc00;">34.2°C</span></div>
-        </div>
-
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">2-Week Heartbeat Pipeline</h3>
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Pipeline Control (2-Week Cycle)</h3>
         
-        <div id="timeline-container">
-            <div class="timeline-item active">
-                <div class="flex-row" style="border: none; padding: 0;">
-                    <div class="batch-title">Batch F-04 <span class="badge active">Flower 2</span></div>
-                    <div class="val" style="font-size: 12px;">Day 60/70</div>
-                </div>
-                <div class="batch-sub" style="color: var(--green); font-weight: bold; margin-top: 4px;">Harvest Window opens in 10 Days</div>
-            </div>
-            
-            <div class="timeline-item">
-                <div class="flex-row" style="border: none; padding: 0;">
-                    <div class="batch-title">Batch V-09 <span class="badge">Veg Space A</span></div>
-                    <div class="val" style="font-size: 12px;">Day 18/28</div>
-                </div>
-                <div class="batch-sub">Preparing for flip to Flower 2 upon harvest.</div>
-            </div>
+        <div id="tech-rooms-list"></div>
 
-            <div class="timeline-item">
-                <div class="flex-row" style="border: none; padding: 0;">
-                    <div class="batch-title">Batch C-12 <span class="badge">Propagation</span></div>
-                    <div class="val" style="font-size: 12px;">Day 4/14</div>
-                </div>
-                <div class="batch-sub">Rooting phase normal. Substrate EC: 1.2</div>
-            </div>
-        </div>
-
-        <button class="btn" style="background: transparent; border: 1px dashed var(--green); color: var(--green);" onclick="addCloneBatch()">+ Log New Clone Batch</button>
-    </div>
-
-    <div id="view-floor" class="view">
-        <div style="margin-bottom: 15px; font-weight: bold; color: var(--green);">Shift SOPs - Floor Team</div>
-        <div class="card" style="display: flex; gap: 15px; align-items: center; padding: 15px;">
-            <div style="width: 20px; height: 20px; background: var(--green); border-radius: 4px;"></div>
-            <div style="text-decoration: line-through; color: var(--sub);">Room 2: Flush irrigation lines</div>
-        </div>
-        <div class="card" style="display: flex; gap: 15px; align-items: center; padding: 15px; border-left: 3px solid var(--green);">
-            <div style="width: 20px; height: 20px; border: 2px solid #555; border-radius: 4px;"></div>
-            <div>Room 4: Under-canopy defoliation</div>
-        </div>
-        <div class="card" style="display: flex; gap: 15px; align-items: center; padding: 15px;">
-            <div style="width: 20px; height: 20px; border: 2px solid #555; border-radius: 4px;"></div>
-            <div>Upload Room 4 canopy photo for QA audit</div>
-        </div>
-        <button class="btn" style="margin-top: 20px; opacity: 0.5;">Submit End of Shift Report</button>
+        <button class="btn btn-outline" onclick="spawnClones()">+ Add New Clone Batch</button>
     </div>
 
     <script>
-        // Authentication Logic
+        // --- DATABASE & LOGIC ---
+        let db = {
+            stats: { totalYield: 0, harvestCount: 0 },
+            rooms: [
+                { id: "f1", name: "Flower 1", batch: "B-01", type: "flower", daysLeft: 10 },
+                { id: "f2", name: "Flower 2", batch: "B-02", type: "flower", daysLeft: 24 },
+                { id: "f3", name: "Flower 3", batch: "B-03", type: "flower", daysLeft: 38 },
+                { id: "f4", name: "Flower 4", batch: "B-04", type: "flower", daysLeft: 52 },
+                { id: "f5", name: "Flower 5", batch: "B-05", type: "flower", daysLeft: 66 },
+                { id: "vA", name: "Veg Space A", batch: "B-06", type: "veg", daysLeft: 4 },
+                { id: "vB", name: "Veg Space B", batch: "B-07", type: "veg", daysLeft: 18 },
+                { id: "prop", name: "Propagation", batch: "B-08", type: "prop", daysLeft: 10 }
+            ],
+            nextBatchNum: 9
+        };
+
+        // Load from phone memory
+        function loadData() {
+            const saved = localStorage.getItem('cannatoriaDB');
+            if (saved) { db = JSON.parse(saved); }
+            else { saveData(); }
+        }
+
+        function saveData() { localStorage.setItem('cannatoriaDB', JSON.stringify(db)); }
+        
+        function resetData() {
+            localStorage.removeItem('cannatoriaDB');
+            alert("App Reset to Default Values.");
+            location.reload();
+        }
+
+        // --- AUTHENTICATION ---
         function attemptLogin() {
             const user = document.getElementById('username').value.toLowerCase();
             const pass = document.getElementById('password').value.toLowerCase();
-            const error = document.getElementById('login-error');
-            
-            error.style.display = 'none';
+            document.getElementById('login-error').style.display = 'none';
+
+            loadData();
 
             if (user === 'boss' && pass === 'roi') {
-                showView('owner', 'Investor & ROI View');
+                renderOwner();
+                showView('owner', 'Investor Dashboard');
             } else if (user === 'crew' && pass === '1gw') {
+                renderTech();
                 showView('tech', 'Flight Crew Command');
-            } else if (user === 'floor' && pass === 'sop') {
-                showView('floor', 'Floor Operations');
             } else {
-                error.style.display = 'block';
+                document.getElementById('login-error').style.display = 'block';
             }
         }
 
@@ -188,10 +144,7 @@
             document.getElementById('view-' + viewId).classList.add('active');
             document.getElementById('header-subtitle').innerText = title;
             document.getElementById('logoutBtn').style.display = 'block';
-            
-            // Clear inputs
-            document.getElementById('username').value = '';
-            document.getElementById('password').value = '';
+            document.getElementById('username').value = ''; document.getElementById('password').value = '';
         }
 
         function logout() {
@@ -201,35 +154,116 @@
             document.getElementById('logoutBtn').style.display = 'none';
         }
 
-        // Consultant App Logic: Add new clones
-        let batchCounter = 13;
-        function addCloneBatch() {
-            const container = document.getElementById('timeline-container');
-            const newBatch = document.createElement('div');
-            newBatch.className = 'timeline-item';
-            newBatch.innerHTML = `
-                <div class="flex-row" style="border: none; padding: 0;">
-                    <div class="batch-title">Batch C-${batchCounter} <span class="badge" style="border: 1px solid var(--green); color: var(--green);">Just Added</span></div>
-                    <div class="val" style="font-size: 12px;">Day 1/14</div>
-                </div>
-                <div class="batch-sub">Cuttings taken and logged to timeline. Awaiting rooting.</div>
-            `;
-            container.appendChild(newBatch);
-            batchCounter++;
-            
-            // Scroll to bottom
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        // --- OWNER DASHBOARD ---
+        function renderOwner() {
+            // Calculate 1-Ton Projection (Assuming 26 harvests a year on 2-week cycle)
+            let avgYield = db.stats.harvestCount > 0 ? (db.stats.totalYield / db.stats.harvestCount) : 38.5; // Default 38.5kg to show exactly ~1,001kg projection initially
+            let annualProj = avgYield * 26; 
+
+            document.getElementById('owner-projection').innerHTML = `${Math.round(annualProj).toLocaleString()} <span style="font-size: 16px; color: var(--sub);">kg</span>`;
+            document.getElementById('owner-avg-yield').innerHTML = `${avgYield.toFixed(1)} <span style="font-size: 16px; color: var(--sub);">kg</span>`;
+
+            let html = '';
+            db.rooms.forEach(r => {
+                if(r.batch) {
+                    let alertColor = r.daysLeft <= 14 ? 'color: var(--green);' : '';
+                    html += `
+                    <div class="flex-row">
+                        <div>
+                            <div style="font-weight: bold; font-size: 14px;">${r.name}</div>
+                            <div style="font-size: 11px; color: var(--sub);">Batch: ${r.batch}</div>
+                        </div>
+                        <div class="val" style="${alertColor}">${r.daysLeft} Days Left</div>
+                    </div>`;
+                } else {
+                    html += `<div class="flex-row"><div><div style="font-weight: bold; font-size: 14px; color: #555;">${r.name}</div></div><div class="val" style="color: #555;">Empty</div></div>`;
+                }
+            });
+            document.getElementById('owner-rooms-list').innerHTML = `<div class="card">${html}</div>`;
         }
 
-        // Live Simulation (Sensors)
-        function fluctuate(base, variance) { return (base + (Math.random() * variance * 2) - variance).toFixed(2); }
-        setInterval(() => {
-            let warnTemp = document.getElementById('sim-temp-warn');
-            if (warnTemp) warnTemp.innerText = fluctuate(34.2, 0.4) + '°C';
+        // --- CONSULTANT DASHBOARD ---
+        function renderTech() {
+            let html = '';
+            db.rooms.forEach(r => {
+                html += `<div class="card" style="${r.batch ? 'border-left: 3px solid var(--green);' : ''}">
+                    <div class="room-title">${r.name}</div>`;
+                
+                if (r.batch) {
+                    html += `
+                    <div class="flex-row" style="border: none; padding-bottom: 5px;">
+                        <span class="badge">${r.batch}</span>
+                        <span class="val" style="font-size: 12px;">${r.daysLeft} Days to Finish</span>
+                    </div>`;
+                    
+                    // Actions based on room type
+                    if (r.type === 'flower') {
+                        html += `<button class="btn btn-action btn-harvest" onclick="harvestRoom('${r.id}', '${r.batch}')">Log Harvest & Clear Room</button>`;
+                    } else if (r.type === 'veg') {
+                        html += `<button class="btn btn-action" onclick="moveBatch('${r.id}', 'flower')">Flip to Empty Flower Room</button>`;
+                    } else if (r.type === 'prop') {
+                        html += `<button class="btn btn-action" onclick="moveBatch('${r.id}', 'veg')">Move to Empty Veg Room</button>`;
+                    }
+                } else {
+                    html += `<div class="status-empty">Room sanitized and waiting for next rotation.</div>`;
+                }
+                html += `</div>`;
+            });
+            document.getElementById('tech-rooms-list').innerHTML = html;
+        }
+
+        // --- SYSTEM ACTIONS ---
+        function harvestRoom(roomId, batchName) {
+            let weight = prompt(`Enter harvested weight in KG for ${batchName}:`, "40");
+            if (weight && !isNaN(weight)) {
+                db.stats.totalYield += parseFloat(weight);
+                db.stats.harvestCount += 1;
+                
+                let room = db.rooms.find(r => r.id === roomId);
+                room.batch = null;
+                room.daysLeft = 0;
+                
+                saveData();
+                renderTech();
+                alert(`Harvest Logged: ${weight}kg. Room is now empty.`);
+            }
+        }
+
+        function moveBatch(fromRoomId, targetType) {
+            let fromRoom = db.rooms.find(r => r.id === fromRoomId);
+            let emptyTarget = db.rooms.find(r => r.type === targetType && !r.batch);
             
-            let margin = document.getElementById('sim-margin');
-            if (margin) margin.innerText = (65.4 + (Math.random() * 0.2 - 0.1)).toFixed(2) + '%';
-        }, 2500);
+            if (!emptyTarget) {
+                alert(`No empty ${targetType.toUpperCase()} rooms available! Harvest or move a batch first.`);
+                return;
+            }
+
+            // Move the batch
+            emptyTarget.batch = fromRoom.batch;
+            emptyTarget.daysLeft = targetType === 'flower' ? 70 : 28; // Standard 10-week flower, 4-week veg
+            
+            fromRoom.batch = null;
+            fromRoom.daysLeft = 0;
+
+            saveData();
+            renderTech();
+        }
+
+        function spawnClones() {
+            let propRoom = db.rooms.find(r => r.type === 'prop');
+            if (propRoom.batch) {
+                alert("Propagation area is full! Move current clones to Veg first.");
+                return;
+            }
+            
+            let batchStr = "B-" + (db.nextBatchNum < 10 ? "0" + db.nextBatchNum : db.nextBatchNum);
+            propRoom.batch = batchStr;
+            propRoom.daysLeft = 14; // 2 weeks rooting
+            db.nextBatchNum++;
+            
+            saveData();
+            renderTech();
+        }
     </script>
 </body>
 </html>

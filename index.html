@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cannatoria OS | V3 Enterprise</title>
+    <title>Cannatoria OS | V4 Enterprise</title>
     <style>
         :root { 
             --green: #00897b; --bg: #0a0a0a; --card: #141414; --text: #fff; --sub: #888; --border: #222; 
-            --color-prop: #00b4d8; --color-veg: #00e676; --color-flower: #ff9800; --warning: #ffcc00;
+            --color-prop: #00b4d8; --color-veg: #00e676; --color-flower: #ff9800; --warning: #ffcc00; --danger: #ff3b30;
         }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; user-select: none; }
         
@@ -24,9 +24,8 @@
         /* Inputs & Buttons */
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 5px; text-transform: uppercase; }
-        .input-group input { width: 100%; box-sizing: border-box; background: var(--card); border: 1px solid var(--border); color: #fff; padding: 15px; border-radius: 8px; font-size: 16px; outline: none; }
-        .input-group input:focus { border-color: var(--green); }
-        .input-inline { background: #000; border: 1px solid #333; color: #fff; padding: 5px; width: 60px; text-align: right; border-radius: 4px; font-family: monospace; }
+        .input-group input, .input-group select { width: 100%; box-sizing: border-box; background: var(--card); border: 1px solid var(--border); color: #fff; padding: 15px; border-radius: 8px; font-size: 16px; outline: none; }
+        .input-inline { background: #000; border: 1px solid #333; color: #fff; padding: 5px; width: 80px; text-align: right; border-radius: 4px; font-family: monospace; }
         
         .btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .btn-action { width: 100%; padding: 12px; font-size: 12px; font-weight: bold; border-radius: 6px; margin-top: 15px; border: none; cursor: pointer; text-transform: uppercase; }
@@ -39,6 +38,7 @@
         .flex-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
         .flex-row:last-child { border: none; padding-bottom: 0; }
         .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #000; }
+        .priority-high { background: rgba(255, 59, 48, 0.1); border-left: 3px solid var(--danger); }
         
         .date-text { font-family: monospace; font-size: 12px; color: var(--sub); }
         .history-list { font-size: 12px; }
@@ -48,6 +48,15 @@
         .cogs-table { width: 100%; font-size: 13px; margin-top: 15px; border-collapse: collapse; }
         .cogs-table td { padding: 10px 0; border-bottom: 1px solid #222; }
         .cogs-table tr:last-child td { border-bottom: none; font-weight: bold; font-size: 15px; color: var(--green); }
+        
+        /* Checkbox Task List */
+        .task-item { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1a1a1a; border-radius: 8px; margin-bottom: 10px; border: 1px solid #333; }
+        .task-box { width: 20px; height: 20px; border: 2px solid #555; border-radius: 4px; cursor: pointer; }
+        .task-box.done { background: var(--green); border-color: var(--green); }
+        .task-text { flex-grow: 1; font-size: 14px; }
+        .task-text.done { text-decoration: line-through; color: var(--sub); }
+        .task-meta { font-size: 10px; color: var(--sub); margin-top: 4px; text-transform: uppercase; }
+        .badge-priority { background: var(--danger); color: #fff; padding: 2px 6px; border-radius: 3px; font-size: 9px; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -73,76 +82,98 @@
 
     <div id="view-owner" class="view">
         <div class="card">
-            <div class="label">Target Facility Capacity</div>
-            <div class="big-num" style="color: var(--green);">1,001 <span style="font-size: 16px; color: var(--sub);">kg (1 Ton)</span></div>
-            <div class="label">Projected Yield Based on SOPs</div>
+            <div class="label">Calculated COGS per Kilogram</div>
+            <div class="big-num" id="cogs-per-kg">$0</div>
+            <div class="label" style="color: var(--green);">Automated algorithm based on monthly yield vs costs.</div>
         </div>
 
         <div class="card">
-            <div class="label" style="display: inline-block;">Cost of Production (COGS) Editor</div>
-            <button class="btn-edit" onclick="toggleEditCOGS()" id="edit-btn">Edit Inputs</button>
+            <div class="label" style="display: inline-block;">Monthly Operational Expenses</div>
+            <button class="btn-edit" onclick="toggleEditCOGS()" id="edit-btn">Edit Costs</button>
             
             <table class="cogs-table">
                 <tr>
-                    <td>Seasonal Labor Impact</td>
-                    <td style="text-align: right;">$<span id="val-labor">120</span> <input type="number" id="inp-labor" class="input-inline" style="display:none;"></td>
+                    <td>Labor / Staff</td>
+                    <td style="text-align: right;">$<span id="val-labor">0</span> <input type="number" id="inp-labor" class="input-inline" style="display:none;"></td>
                 </tr>
                 <tr>
                     <td>Nutrients & Inputs</td>
-                    <td style="text-align: right; color: var(--color-prop);">$<span id="val-nutes">95</span> <input type="number" id="inp-nutes" class="input-inline" style="display:none;"></td>
+                    <td style="text-align: right;">$<span id="val-nutes">0</span> <input type="number" id="inp-nutes" class="input-inline" style="display:none;"></td>
                 </tr>
                 <tr>
-                    <td>Power & Utilities</td>
-                    <td style="text-align: right;">$<span id="val-power">432</span> <input type="number" id="inp-power" class="input-inline" style="display:none;"></td>
+                    <td>Electricity / Utilities</td>
+                    <td style="text-align: right;">$<span id="val-power">0</span> <input type="number" id="inp-power" class="input-inline" style="display:none;"></td>
                 </tr>
                 <tr>
-                    <td>Total COGS per kg</td>
-                    <td style="text-align: right;">$<span id="val-total">647</span></td>
+                    <td>Optional / Overhead</td>
+                    <td style="text-align: right;">$<span id="val-misc">0</span> <input type="number" id="inp-misc" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Total Monthly Spend</td>
+                    <td style="text-align: right;">$<span id="val-total-monthly">0</span></td>
                 </tr>
             </table>
+            <div style="margin-top: 15px; font-size: 11px; color: var(--sub); border-top: 1px solid #222; padding-top: 10px;">
+                *Est. Monthly Yield: <span id="est-monthly-yield" style="color: #fff; font-weight: bold;">83.3</span> kg 
+                <span style="display:block; margin-top:3px;">(Based on 1,000kg facility cap / 12 months)</span>
+            </div>
         </div>
 
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Harvest Ledger & Micro-Metrics</h3>
-        <div class="card" id="harvest-history"></div>
-
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">Live Facility Pipeline</h3>
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Live Facility Pipeline</h3>
         <div id="owner-rooms-list"></div>
     </div>
 
     <div id="view-tech" class="view">
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Task Delegation (Push to Floor Ops)</h3>
+        <div class="card" style="padding: 15px;">
+            <div class="input-group" style="margin-bottom: 10px;">
+                <input type="text" id="new-task-text" placeholder="e.g. Flush Room 2 reservoirs..." style="padding: 10px; font-size: 14px;">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <select id="new-task-priority" style="flex: 1; padding: 10px; font-size: 12px; background: #000; color: #fff; border: 1px solid #333; border-radius: 6px;">
+                    <option value="normal">Normal Priority</option>
+                    <option value="high">HIGH Priority (Urgent)</option>
+                </select>
+                <button onclick="addTask()" style="background: var(--green); color: #fff; border: none; border-radius: 6px; padding: 0 15px; font-weight: bold; cursor: pointer;">Assign</button>
+            </div>
+        </div>
+
+        <div id="tech-task-list" style="margin-bottom: 30px;"></div>
+
         <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Heartbeat Execution Engine</h3>
         <div id="tech-rooms-list"></div>
         <button class="btn" style="background: transparent; border: 1px dashed var(--color-prop); color: var(--color-prop);" onclick="spawnClones()">+ Log New Clone Batch (300-450 Plants)</button>
     </div>
 
+    <div id="view-floor" class="view">
+        <div class="card" style="border-left: 4px solid var(--green);">
+            <div style="font-weight: bold; font-size: 18px; margin-bottom: 5px;">Shift Directives</div>
+            <div style="font-size: 12px; color: var(--sub);">Complete all required tasks before End of Shift.</div>
+        </div>
+
+        <div id="floor-task-list"></div>
+        
+        <div style="text-align: center; margin-top: 30px; font-size: 11px; color: #555;">
+            IoT Sensor Integration & Automated Pump Control<br>Modules coming in Phase 2 Update.
+        </div>
+    </div>
+
     <script>
         // --- CALENDAR ENGINE ---
-        // Anchored to April 26, 2026
         const systemDate = new Date("2026-04-26T12:00:00Z");
-        
-        function formatDate(dateString) {
-            const options = { month: 'short', day: 'numeric', year: 'numeric' };
-            return new Date(dateString).toLocaleDateString('en-US', options);
-        }
-
-        function calculateTargetDate(daysToAdd) {
-            let d = new Date(systemDate);
-            d.setDate(d.getDate() + daysToAdd);
-            return d.toISOString();
-        }
-
-        function getDaysBetween(targetDateIso) {
-            let target = new Date(targetDateIso);
-            let diffTime = target - systemDate;
-            let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays;
-        }
+        function formatDate(dateString) { return new Date(dateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+        function calculateTargetDate(daysToAdd) { let d = new Date(systemDate); d.setDate(d.getDate() + daysToAdd); return d.toISOString(); }
+        function getDaysBetween(targetDateIso) { return Math.ceil((new Date(targetDateIso) - systemDate) / (1000 * 60 * 60 * 24)); }
 
         // --- DATABASE ---
         let db = {
             currentUser: null,
             stats: { totalYield: 0, harvestCount: 0 },
-            financials: { labor: 120, nutes: 95, power: 432 },
+            financials: { laborMonthly: 10000, nutesMonthly: 7900, powerMonthly: 36000, miscMonthly: 2000 },
+            tasks: [
+                { id: 1, text: "Under-canopy defoliation in Flower 2", priority: "normal", done: false },
+                { id: 2, text: "Calibrate EC pens in Veg Room", priority: "high", done: false }
+            ],
             history: [],
             rooms: [
                 { id: "f1", name: "Flower 1", batch: "B-01", type: "flower", plants: 350, targetDate: calculateTargetDate(10), color: "var(--color-flower)" },
@@ -158,18 +189,18 @@
         };
 
         function initApp() {
-            const saved = localStorage.getItem('cannatoriaV3');
+            const saved = localStorage.getItem('cannatoriaV4');
             if (saved) { db = JSON.parse(saved); }
             else { saveData(); }
 
-            // Session Persistence
             if (db.currentUser === 'boss') { routeOwner(); }
             else if (db.currentUser === 'crew') { routeTech(); }
+            else if (db.currentUser === 'floor') { routeFloor(); }
             else { showView('login', 'Authentication'); }
         }
 
-        function saveData() { localStorage.setItem('cannatoriaV3', JSON.stringify(db)); }
-        function resetData() { localStorage.removeItem('cannatoriaV3'); alert("Reset Complete."); location.reload(); }
+        function saveData() { localStorage.setItem('cannatoriaV4', JSON.stringify(db)); }
+        function resetData() { localStorage.removeItem('cannatoriaV4'); alert("Reset Complete."); location.reload(); }
 
         // --- AUTH ---
         function attemptLogin() {
@@ -177,6 +208,7 @@
             const pass = document.getElementById('password').value.toLowerCase();
             if (user === 'boss' && pass === 'roi') { db.currentUser = 'boss'; saveData(); routeOwner(); }
             else if (user === 'crew' && pass === '1gw') { db.currentUser = 'crew'; saveData(); routeTech(); }
+            else if (user === 'floor' && pass === 'sop') { db.currentUser = 'floor'; saveData(); routeFloor(); }
             else { document.getElementById('login-error').style.display = 'block'; }
         }
 
@@ -197,6 +229,7 @@
 
         function routeOwner() { renderOwner(); showView('owner', 'Investor CFO View'); }
         function routeTech() { renderTech(); showView('tech', 'Flight Crew Command'); }
+        function routeFloor() { renderFloor(); showView('floor', 'Floor Operations'); }
 
         // --- OWNER FINANCIALS ---
         let editingCOGS = false;
@@ -205,60 +238,41 @@
             const btn = document.getElementById('edit-btn');
             
             if (editingCOGS) {
-                btn.innerText = "Save Inputs";
-                btn.style.color = "var(--green)";
-                document.getElementById('val-labor').style.display = 'none';
-                document.getElementById('inp-labor').style.display = 'inline-block';
-                document.getElementById('inp-labor').value = db.financials.labor;
-                
-                document.getElementById('val-nutes').style.display = 'none';
-                document.getElementById('inp-nutes').style.display = 'inline-block';
-                document.getElementById('inp-nutes').value = db.financials.nutes;
-                
-                document.getElementById('val-power').style.display = 'none';
-                document.getElementById('inp-power').style.display = 'inline-block';
-                document.getElementById('inp-power').value = db.financials.power;
+                btn.innerText = "Save Costs"; btn.style.color = "var(--green)";
+                document.getElementById('val-labor').style.display = 'none'; document.getElementById('inp-labor').style.display = 'inline-block'; document.getElementById('inp-labor').value = db.financials.laborMonthly;
+                document.getElementById('val-nutes').style.display = 'none'; document.getElementById('inp-nutes').style.display = 'inline-block'; document.getElementById('inp-nutes').value = db.financials.nutesMonthly;
+                document.getElementById('val-power').style.display = 'none'; document.getElementById('inp-power').style.display = 'inline-block'; document.getElementById('inp-power').value = db.financials.powerMonthly;
+                document.getElementById('val-misc').style.display = 'none'; document.getElementById('inp-misc').style.display = 'inline-block'; document.getElementById('inp-misc').value = db.financials.miscMonthly;
             } else {
-                btn.innerText = "Edit Inputs";
-                btn.style.color = "var(--text)";
-                
-                db.financials.labor = parseFloat(document.getElementById('inp-labor').value) || 0;
-                db.financials.nutes = parseFloat(document.getElementById('inp-nutes').value) || 0;
-                db.financials.power = parseFloat(document.getElementById('inp-power').value) || 0;
-                saveData();
-                renderOwner();
+                btn.innerText = "Edit Costs"; btn.style.color = "var(--text)";
+                db.financials.laborMonthly = parseFloat(document.getElementById('inp-labor').value) || 0;
+                db.financials.nutesMonthly = parseFloat(document.getElementById('inp-nutes').value) || 0;
+                db.financials.powerMonthly = parseFloat(document.getElementById('inp-power').value) || 0;
+                db.financials.miscMonthly = parseFloat(document.getElementById('inp-misc').value) || 0;
+                saveData(); renderOwner();
             }
         }
 
         function renderOwner() {
-            // Update COGS
-            document.getElementById('val-labor').innerText = db.financials.labor;
-            document.getElementById('val-nutes').innerText = db.financials.nutes;
-            document.getElementById('val-power').innerText = db.financials.power;
-            document.getElementById('val-total').innerText = (db.financials.labor + db.financials.nutes + db.financials.power).toFixed(2);
-            document.getElementById('inp-labor').style.display = 'none';
-            document.getElementById('inp-nutes').style.display = 'none';
-            document.getElementById('inp-power').style.display = 'none';
-            document.getElementById('val-labor').style.display = 'inline';
-            document.getElementById('val-nutes').style.display = 'inline';
-            document.getElementById('val-power').style.display = 'inline';
+            let labor = db.financials.laborMonthly; let nutes = db.financials.nutesMonthly;
+            let power = db.financials.powerMonthly; let misc = db.financials.miscMonthly;
+            let totalMonthly = labor + nutes + power + misc;
+            
+            let monthlyYield = 1000 / 12; // 83.33 kg based on 1 Ton cap.
+            let cogsPerKg = totalMonthly / monthlyYield;
 
-            // History
-            let histHtml = '<div class="history-list">';
-            if(db.history.length === 0) { histHtml += '<div style="color:#555; font-style:italic;">No harvests logged yet.</div>'; }
-            db.history.slice().reverse().forEach(h => {
-                histHtml += `<div class="history-item">
-                    <div>
-                        <strong style="color:var(--color-flower)">${h.room}</strong> <span style="color:#888;">(${h.batch})</span><br>
-                        <span style="font-size: 10px; color: var(--sub);">Avg: ${h.ypp}g per plant (${h.plants} plants)</span>
-                    </div>
-                    <div style="font-family:monospace; font-weight:bold; text-align:right;">+${h.weight} kg<br><span style="font-size:10px; color:var(--sub);">${formatDate(h.date)}</span></div>
-                </div>`;
-            });
-            histHtml += '</div>';
-            document.getElementById('harvest-history').innerHTML = histHtml;
+            document.getElementById('cogs-per-kg').innerText = `$${cogsPerKg.toFixed(2)}`;
+            document.getElementById('val-labor').innerText = labor.toLocaleString();
+            document.getElementById('val-nutes').innerText = nutes.toLocaleString();
+            document.getElementById('val-power').innerText = power.toLocaleString();
+            document.getElementById('val-misc').innerText = misc.toLocaleString();
+            document.getElementById('val-total-monthly').innerText = totalMonthly.toLocaleString();
+            
+            document.getElementById('inp-labor').style.display = 'none'; document.getElementById('inp-nutes').style.display = 'none';
+            document.getElementById('inp-power').style.display = 'none'; document.getElementById('inp-misc').style.display = 'none';
+            document.getElementById('val-labor').style.display = 'inline'; document.getElementById('val-nutes').style.display = 'inline';
+            document.getElementById('val-power').style.display = 'inline'; document.getElementById('val-misc').style.display = 'inline';
 
-            // Rooms
             let html = '';
             db.rooms.forEach(r => {
                 if(r.batch) {
@@ -266,12 +280,11 @@
                     html += `
                     <div class="flex-row">
                         <div style="border-left: 3px solid ${r.color}; padding-left: 10px;">
-                            <div style="font-weight: bold; font-size: 14px; color: ${r.color};">${r.name} <span style="font-size:11px; color:#fff; font-weight:normal;">(${r.plants} Plants)</span></div>
-                            <div style="font-size: 11px; color: var(--sub);">Batch: ${r.batch}</div>
+                            <div style="font-weight: bold; font-size: 14px; color: ${r.color};">${r.name}</div>
+                            <div style="font-size: 11px; color: var(--sub);">Batch: ${r.batch} | ${r.plants} Plants</div>
                         </div>
                         <div style="text-align:right;">
                             <div style="font-family:monospace; font-weight:bold; font-size:14px;">${days} Days</div>
-                            <div class="date-text">${formatDate(r.targetDate)}</div>
                         </div>
                     </div>`;
                 }
@@ -279,8 +292,56 @@
             document.getElementById('owner-rooms-list').innerHTML = `<div class="card">${html}</div>`;
         }
 
+        // --- TASK MANAGEMENT LOGIC ---
+        function addTask() {
+            let text = document.getElementById('new-task-text').value;
+            let priority = document.getElementById('new-task-priority').value;
+            if (text.trim() === '') return;
+            
+            db.tasks.push({ id: Date.now(), text: text, priority: priority, done: false });
+            document.getElementById('new-task-text').value = '';
+            saveData(); renderTech();
+        }
+
+        function toggleTask(taskId) {
+            let task = db.tasks.find(t => t.id === taskId);
+            if (task) { task.done = !task.done; saveData(); }
+            if (db.currentUser === 'crew') renderTech();
+            if (db.currentUser === 'floor') renderFloor();
+        }
+
+        function clearDoneTasks() {
+            db.tasks = db.tasks.filter(t => !t.done);
+            saveData(); renderTech();
+        }
+
+        function renderTasks(viewType) {
+            let html = '';
+            if (db.tasks.length === 0) { html = `<div style="color:#555; font-style:italic; font-size:12px; padding: 10px;">No active tasks.</div>`; }
+            
+            db.tasks.forEach(t => {
+                let priorityHtml = t.priority === 'high' ? `<span class="badge-priority">URGENT</span>` : '';
+                let extraClass = t.priority === 'high' ? 'priority-high' : '';
+                html += `
+                <div class="task-item ${extraClass}">
+                    <div class="task-box ${t.done ? 'done' : ''}" onclick="toggleTask(${t.id})"></div>
+                    <div class="task-text ${t.done ? 'done' : ''}">
+                        ${t.text}
+                        <div class="task-meta">${priorityHtml} ${t.done ? 'Completed' : 'Pending Action'}</div>
+                    </div>
+                </div>`;
+            });
+            
+            if (viewType === 'tech' && db.tasks.some(t => t.done)) {
+                html += `<button class="btn-edit" style="float:none; display:block; margin: 10px auto;" onclick="clearDoneTasks()">Clear Completed Tasks</button>`;
+            }
+            return html;
+        }
+
         // --- CONSULTANT DASHBOARD ---
         function renderTech() {
+            document.getElementById('tech-task-list').innerHTML = renderTasks('tech');
+
             let html = '';
             db.rooms.forEach(r => {
                 html += `<div class="card" style="border-top: 3px solid ${r.batch ? r.color : '#333'};">
@@ -292,98 +353,57 @@
                 if (r.batch) {
                     let days = getDaysBetween(r.targetDate);
                     let isReady = days <= 0;
-                    
                     html += `
                     <div class="flex-row" style="border: none; padding-bottom: 5px;">
                         <span class="badge" style="background: ${r.color};">${r.batch}</span>
                         <div style="text-align:right;">
-                            <span class="val" style="font-size: 12px; color: ${isReady ? 'var(--warning)' : '#fff'};">${isReady ? 'READY' : days + ' Days Left'}</span><br>
-                            <span class="date-text">${formatDate(r.targetDate)}</span>
+                            <span class="val" style="font-size: 12px; color: ${isReady ? 'var(--warning)' : '#fff'};">${isReady ? 'READY' : days + ' Days Left'}</span>
                         </div>
                     </div>`;
-                    
-                    if (r.type === 'flower') {
-                        html += `<button class="btn-action" style="background: var(--color-flower); color: #000;" onclick="harvestRoom('${r.id}', '${r.name}', '${r.batch}', ${r.plants}, ${days})">Cut & Log Harvest Weight</button>`;
-                    } else if (r.type === 'veg') {
-                        html += `<button class="btn-action" style="background: var(--color-veg); color: #000;" onclick="moveBatch('${r.id}', 'flower', ${days})">Flip to Empty Flower Room</button>`;
-                    } else if (r.type === 'prop') {
-                        html += `<button class="btn-action" style="background: var(--color-prop); color: #000;" onclick="moveBatch('${r.id}', 'veg', ${days})">Transfer to Empty Veg Space</button>`;
-                    }
-                } else {
-                    html += `<div style="color: #555; font-size: 12px; font-style: italic;">Cleaned. Awaiting next cycle.</div>`;
-                }
+                    if (r.type === 'flower') { html += `<button class="btn-action" style="background: var(--color-flower); color: #000;" onclick="harvestRoom('${r.id}', '${r.name}', '${r.batch}', ${r.plants}, ${days})">Cut & Log Harvest Weight</button>`; } 
+                    else if (r.type === 'veg') { html += `<button class="btn-action" style="background: var(--color-veg); color: #000;" onclick="moveBatch('${r.id}', 'flower', ${days})">Flip to Empty Flower Room</button>`; } 
+                    else if (r.type === 'prop') { html += `<button class="btn-action" style="background: var(--color-prop); color: #000;" onclick="moveBatch('${r.id}', 'veg', ${days})">Transfer to Empty Veg Space</button>`; }
+                } else { html += `<div style="color: #555; font-size: 12px; font-style: italic;">Cleaned. Awaiting next cycle.</div>`; }
                 html += `</div>`;
             });
             document.getElementById('tech-rooms-list').innerHTML = html;
         }
 
-        // --- HEARTBEAT SYSTEM ACTIONS ---
-        function checkHeartbeat(daysLeft) {
-            if (daysLeft > 0) {
-                return confirm(`HEARTBEAT LOCK ALERT: This batch has ${daysLeft} days remaining in its cycle. Moving it now breaks the 2-week perpetual rhythm. Override and proceed anyway?`);
-            }
-            return true;
+        // --- WORKER DASHBOARD ---
+        function renderFloor() {
+            document.getElementById('floor-task-list').innerHTML = renderTasks('floor');
         }
 
+        // --- HEARTBEAT ACTIONS ---
         function harvestRoom(roomId, roomName, batchName, plants, daysLeft) {
-            if (!checkHeartbeat(daysLeft)) return;
-
             let weight = prompt(`Final Dry Weight (KG) for ${roomName} (${batchName}):`, "42.5");
             if (weight && !isNaN(weight)) {
-                let w = parseFloat(weight);
-                db.stats.totalYield += w;
-                db.stats.harvestCount += 1;
-                
-                // Micro-metric: Grams per plant calculation
-                let gramsTotal = w * 1000;
-                let ypp = (gramsTotal / plants).toFixed(1);
-                
-                db.history.push({ room: roomName, batch: batchName, weight: w.toFixed(1), plants: plants, ypp: ypp, date: new Date().toISOString() });
-                
                 let room = db.rooms.find(r => r.id === roomId);
                 room.batch = null; room.targetDate = null; room.plants = 0;
-                
                 saveData(); renderTech();
-                alert(`Success: ${w}kg logged. Efficiency: ${ypp}g per plant.`);
             }
         }
 
         function moveBatch(fromRoomId, targetType, daysLeft) {
-            if (!checkHeartbeat(daysLeft)) return;
-
             let fromRoom = db.rooms.find(r => r.id === fromRoomId);
             let emptyTarget = db.rooms.find(r => r.type === targetType && !r.batch);
-            
-            if (!emptyTarget) { alert(`System Alert: All ${targetType.toUpperCase()} rooms are full. Clear a room first.`); return; }
-            
-            emptyTarget.batch = fromRoom.batch;
-            emptyTarget.plants = fromRoom.plants;
-            
-            // Set precise calendar target
-            let daysToNext = targetType === 'flower' ? 70 : 28; 
-            emptyTarget.targetDate = calculateTargetDate(daysToNext);
-            
+            if (!emptyTarget) { alert(`All ${targetType.toUpperCase()} rooms are full.`); return; }
+            emptyTarget.batch = fromRoom.batch; emptyTarget.plants = fromRoom.plants;
+            emptyTarget.targetDate = calculateTargetDate(targetType === 'flower' ? 70 : 28);
             fromRoom.batch = null; fromRoom.targetDate = null; fromRoom.plants = 0;
             saveData(); renderTech();
         }
 
         function spawnClones() {
             let propRoom = db.rooms.find(r => r.type === 'prop');
-            if (propRoom.batch) { alert("System Alert: Propagation is currently full."); return; }
-            
-            let pCount = prompt("Enter Plant Count for new batch (Recommended: 300-450):", "350");
+            if (propRoom.batch) { alert("Propagation is full."); return; }
+            let pCount = prompt("Enter Plant Count:", "350");
             if(!pCount || isNaN(pCount)) return;
-
-            let batchStr = "B-" + (db.nextBatchNum < 10 ? "0" + db.nextBatchNum : db.nextBatchNum);
-            propRoom.batch = batchStr; 
-            propRoom.plants = parseInt(pCount);
-            propRoom.targetDate = calculateTargetDate(14); 
-            db.nextBatchNum++;
-            
+            propRoom.batch = "B-" + (db.nextBatchNum < 10 ? "0" + db.nextBatchNum : db.nextBatchNum);
+            propRoom.plants = parseInt(pCount); propRoom.targetDate = calculateTargetDate(14); db.nextBatchNum++;
             saveData(); renderTech();
         }
 
-        // Boot
         window.onload = initApp;
     </script>
 </body>

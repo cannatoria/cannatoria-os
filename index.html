@@ -7,114 +7,229 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Cannatoria OS</title>
     <style>
-        :root { --green: #00897b; --bg: #0a0a0a; --card: #141414; --text: #fff; --sub: #888; }
+        :root { --green: #00897b; --bg: #0a0a0a; --card: #141414; --text: #fff; --sub: #888; --border: #222; }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; user-select: none; }
         
-        .header { padding: 40px 20px 20px; background: var(--bg); border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 10; }
+        .header { padding: 40px 20px 20px; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
         .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--green); margin-right: 8px; vertical-align: middle; }
-        .title { font-size: 24px; font-weight: 800; margin: 0; }
-        .subtitle { font-size: 12px; color: var(--sub); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px; }
-
-        .view { display: none; padding: 20px; padding-bottom: 100px; }
+        .title { font-size: 20px; font-weight: 800; margin: 0; }
+        .logout-btn { display: none; color: var(--green); font-size: 12px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: 1px solid var(--green); padding: 4px 8px; border-radius: 4px; }
+        
+        .view { display: none; padding: 20px; padding-bottom: 50px; }
         .view.active { display: block; }
 
-        .card { background: var(--card); border: 1px solid #222; border-radius: 12px; padding: 20px; margin-bottom: 15px; }
-        .big-num { font-size: 36px; font-weight: 800; color: var(--green); margin: 5px 0; }
-        .label { font-size: 12px; color: var(--sub); text-transform: uppercase; }
-        
-        .flex-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding: 12px 0; }
-        .flex-row:last-child { border: none; padding-bottom: 0; }
-        .val { font-family: monospace; font-size: 18px; font-weight: bold; }
+        /* Login Screen */
+        .login-box { margin-top: 80px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; color: var(--sub); margin-bottom: 5px; text-transform: uppercase; }
+        .input-group input { width: 100%; box-sizing: border-box; background: var(--card); border: 1px solid var(--border); color: #fff; padding: 15px; border-radius: 8px; font-size: 16px; outline: none; }
+        .input-group input:focus { border-color: var(--green); }
+        .btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        .error { color: #ff3b30; font-size: 12px; margin-top: 10px; text-align: center; display: none; }
 
-        .nav-bar { position: fixed; bottom: 0; width: 100%; background: #000; border-top: 1px solid #222; display: flex; justify-content: space-around; padding: 15px 0 25px 0; }
-        .nav-btn { color: var(--sub); font-size: 10px; font-weight: bold; text-align: center; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
-        .nav-btn.active { color: var(--green); }
-        .nav-icon { width: 24px; height: 24px; margin: 0 auto 5px; border-radius: 4px; background: #333; }
-        .nav-btn.active .nav-icon { background: var(--green); }
+        /* Shared Components */
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
+        .big-num { font-size: 32px; font-weight: 800; color: var(--green); margin: 5px 0; }
+        .label { font-size: 12px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
+        .flex-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
+        .flex-row:last-child { border: none; padding-bottom: 0; }
+        .val { font-family: monospace; font-size: 16px; font-weight: bold; }
+        .badge { background: #1a1a1a; padding: 4px 8px; border-radius: 4px; font-size: 10px; color: var(--sub); }
+        .badge.active { color: var(--green); border: 1px solid rgba(0, 137, 123, 0.3); }
+
+        /* Timeline Specific */
+        .timeline-item { border-left: 2px solid #333; padding-left: 15px; margin-left: 5px; position: relative; margin-bottom: 20px; }
+        .timeline-item::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: #333; }
+        .timeline-item.active::before { background: var(--green); box-shadow: 0 0 8px var(--green); }
+        .batch-title { font-weight: bold; font-size: 14px; margin-bottom: 2px; }
+        .batch-sub { font-size: 11px; color: var(--sub); }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 class="title"><span class="logo-mark"></span>Cannatoria OS</h1>
-        <div class="subtitle" id="top-subtitle">Mode: Investor Dashboard</div>
+        <div>
+            <h1 class="title"><span class="logo-mark"></span>Cannatoria OS</h1>
+            <div id="header-subtitle" style="font-size: 11px; color: var(--sub); text-transform: uppercase; margin-top: 4px;">Authentication Required</div>
+        </div>
+        <div class="logout-btn" id="logoutBtn" onclick="logout()">Logout</div>
     </div>
 
-    <div id="view-owner" class="view active">
+    <div id="view-login" class="view active">
+        <div class="login-box">
+            <h2 style="margin-top: 0; margin-bottom: 5px;">System Access</h2>
+            <p style="color: var(--sub); font-size: 14px; margin-bottom: 30px;">Please enter your credentials to access your designated workspace.</p>
+            
+            <div class="input-group">
+                <label>Username</label>
+                <input type="text" id="username" autocapitalize="none">
+            </div>
+            <div class="input-group">
+                <label>Security Key</label>
+                <input type="password" id="password">
+            </div>
+            <button class="btn" onclick="attemptLogin()">Authenticate</button>
+            <div class="error" id="login-error">Invalid credentials. Access denied.</div>
+            
+            <div style="margin-top: 40px; border: 1px solid #333; padding: 15px; border-radius: 8px; font-size: 11px; color: #555;">
+                <strong>Pitch Guide:</strong><br>
+                Owner: boss / roi<br>
+                Consultant: crew / 1gw<br>
+                Worker: floor / sop
+            </div>
+        </div>
+    </div>
+
+    <div id="view-owner" class="view">
         <div class="card">
             <div class="label">Live Profit Margin Target</div>
             <div class="big-num" id="sim-margin">65.4%</div>
-            <div class="label">COGS Tracking: Optimized</div>
+            <div class="label" style="color: var(--green);">Optimized Operations Live</div>
+        </div>
+        <div class="card">
+            <div class="label">Cost of Goods Sold (COGS) KPI</div>
+            <div class="big-num" style="color: #fff;">$647 <span style="font-size: 16px; color: var(--sub);">/ kg</span></div>
+            <div class="label">Target Achieved (Down from $989)</div>
         </div>
         <div class="card">
             <div class="label">Facility Yield Projection</div>
             <div class="big-num" style="color: #fff;">1.08 <span style="font-size: 16px; color: var(--sub);">g/W</span></div>
-            <div class="label" style="color: var(--green);">Tracking +8% Over Baseline</div>
+            <div class="label">On track for 5-Ton Annual Run Rate</div>
         </div>
     </div>
 
     <div id="view-tech" class="view">
-        <div class="card" style="border-left: 4px solid var(--green);">
-            <div style="font-weight: bold; margin-bottom: 10px;">Room 1 (Ripening)</div>
-            <div class="flex-row"><span class="label">Temp</span><span class="val" id="sim-temp">24.2°C</span></div>
-            <div class="flex-row"><span class="label">VPD</span><span class="val green" id="sim-vpd" style="color: var(--green);">1.45</span></div>
-            <div class="flex-row"><span class="label">EC</span><span class="val" id="sim-ec">4.2</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px;">
+            <div class="card" style="margin: 0; padding: 15px;">
+                <div class="label">Prod. Cost</div>
+                <div style="font-size: 20px; font-weight: bold; margin-top: 5px;">$647<span style="font-size: 12px; color: var(--sub);">/kg</span></div>
+            </div>
+            <div class="card" style="margin: 0; padding: 15px;">
+                <div class="label">Avg Yield</div>
+                <div style="font-size: 20px; font-weight: bold; margin-top: 5px; color: var(--green);">1.08<span style="font-size: 12px; color: var(--sub);">g/W</span></div>
+            </div>
         </div>
-        <div class="card" style="border-left: 4px solid #ffcc00;">
-            <div style="font-weight: bold; margin-bottom: 10px; color: #ffcc00;">Room 3 (Bulking) - Heat Watch</div>
-            <div class="flex-row"><span class="label">Temp</span><span class="val" id="sim-temp-warn" style="color: #ffcc00;">33.8°C</span></div>
-            <div class="flex-row"><span class="label">VPD</span><span class="val">1.85</span></div>
+
+        <div class="card" style="border-left: 4px solid #ffcc00; background: rgba(255, 204, 0, 0.05);">
+            <div style="font-weight: bold; margin-bottom: 10px; color: #ffcc00; font-size: 14px;">Sensor Alert: Room 3 (Bulking)</div>
+            <div class="flex-row" style="border-color: rgba(255, 204, 0, 0.2);"><span class="label">Live Temp</span><span class="val" id="sim-temp-warn" style="color: #ffcc00;">34.2°C</span></div>
         </div>
+
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">2-Week Heartbeat Pipeline</h3>
+        
+        <div id="timeline-container">
+            <div class="timeline-item active">
+                <div class="flex-row" style="border: none; padding: 0;">
+                    <div class="batch-title">Batch F-04 <span class="badge active">Flower 2</span></div>
+                    <div class="val" style="font-size: 12px;">Day 60/70</div>
+                </div>
+                <div class="batch-sub" style="color: var(--green); font-weight: bold; margin-top: 4px;">Harvest Window opens in 10 Days</div>
+            </div>
+            
+            <div class="timeline-item">
+                <div class="flex-row" style="border: none; padding: 0;">
+                    <div class="batch-title">Batch V-09 <span class="badge">Veg Space A</span></div>
+                    <div class="val" style="font-size: 12px;">Day 18/28</div>
+                </div>
+                <div class="batch-sub">Preparing for flip to Flower 2 upon harvest.</div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="flex-row" style="border: none; padding: 0;">
+                    <div class="batch-title">Batch C-12 <span class="badge">Propagation</span></div>
+                    <div class="val" style="font-size: 12px;">Day 4/14</div>
+                </div>
+                <div class="batch-sub">Rooting phase normal. Substrate EC: 1.2</div>
+            </div>
+        </div>
+
+        <button class="btn" style="background: transparent; border: 1px dashed var(--green); color: var(--green);" onclick="addCloneBatch()">+ Log New Clone Batch</button>
     </div>
 
     <div id="view-floor" class="view">
-        <div style="margin-bottom: 15px; font-weight: bold; color: var(--green);">Today's Directives</div>
+        <div style="margin-bottom: 15px; font-weight: bold; color: var(--green);">Shift SOPs - Floor Team</div>
         <div class="card" style="display: flex; gap: 15px; align-items: center; padding: 15px;">
             <div style="width: 20px; height: 20px; background: var(--green); border-radius: 4px;"></div>
-            <div style="text-decoration: line-through; color: var(--sub);">Room 2: Flush lines</div>
+            <div style="text-decoration: line-through; color: var(--sub);">Room 2: Flush irrigation lines</div>
         </div>
-        <div class="card" style="display: flex; gap: 15px; align-items: center; padding: 15px;">
+        <div class="card" style="display: flex; gap: 15px; align-items: center; padding: 15px; border-left: 3px solid var(--green);">
             <div style="width: 20px; height: 20px; border: 2px solid #555; border-radius: 4px;"></div>
             <div>Room 4: Under-canopy defoliation</div>
         </div>
         <div class="card" style="display: flex; gap: 15px; align-items: center; padding: 15px;">
             <div style="width: 20px; height: 20px; border: 2px solid #555; border-radius: 4px;"></div>
-            <div>Upload Room 4 canopy photo</div>
+            <div>Upload Room 4 canopy photo for QA audit</div>
         </div>
-    </div>
-
-    <div class="nav-bar">
-        <div class="nav-btn active" onclick="switchView('owner', 'Mode: Investor Dashboard', this)">
-            <div class="nav-icon"></div>Owner
-        </div>
-        <div class="nav-btn" onclick="switchView('tech', 'Mode: Remote Steering', this)">
-            <div class="nav-icon" style="border-radius: 50%;"></div>Flight Crew
-        </div>
-        <div class="nav-btn" onclick="switchView('floor', 'Mode: Floor Ops', this)">
-            <div class="nav-icon" style="background: transparent; border: 2px solid #333;"></div>Floor
-        </div>
+        <button class="btn" style="margin-top: 20px; opacity: 0.5;">Submit End of Shift Report</button>
     </div>
 
     <script>
-        // Navigation Logic
-        function switchView(viewId, title, btn) {
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            btn.classList.add('active');
-            document.getElementById('top-subtitle').innerText = title;
+        // Authentication Logic
+        function attemptLogin() {
+            const user = document.getElementById('username').value.toLowerCase();
+            const pass = document.getElementById('password').value.toLowerCase();
+            const error = document.getElementById('login-error');
+            
+            error.style.display = 'none';
+
+            if (user === 'boss' && pass === 'roi') {
+                showView('owner', 'Investor & ROI View');
+            } else if (user === 'crew' && pass === '1gw') {
+                showView('tech', 'Flight Crew Command');
+            } else if (user === 'floor' && pass === 'sop') {
+                showView('floor', 'Floor Operations');
+            } else {
+                error.style.display = 'block';
+            }
         }
 
-        // Live Simulation Logic
+        function showView(viewId, title) {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            document.getElementById('header-subtitle').innerText = title;
+            document.getElementById('logoutBtn').style.display = 'block';
+            
+            // Clear inputs
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        function logout() {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-login').classList.add('active');
+            document.getElementById('header-subtitle').innerText = 'Authentication Required';
+            document.getElementById('logoutBtn').style.display = 'none';
+        }
+
+        // Consultant App Logic: Add new clones
+        let batchCounter = 13;
+        function addCloneBatch() {
+            const container = document.getElementById('timeline-container');
+            const newBatch = document.createElement('div');
+            newBatch.className = 'timeline-item';
+            newBatch.innerHTML = `
+                <div class="flex-row" style="border: none; padding: 0;">
+                    <div class="batch-title">Batch C-${batchCounter} <span class="badge" style="border: 1px solid var(--green); color: var(--green);">Just Added</span></div>
+                    <div class="val" style="font-size: 12px;">Day 1/14</div>
+                </div>
+                <div class="batch-sub">Cuttings taken and logged to timeline. Awaiting rooting.</div>
+            `;
+            container.appendChild(newBatch);
+            batchCounter++;
+            
+            // Scroll to bottom
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
+
+        // Live Simulation (Sensors)
         function fluctuate(base, variance) { return (base + (Math.random() * variance * 2) - variance).toFixed(2); }
         setInterval(() => {
-            document.getElementById('sim-temp').innerText = fluctuate(24.2, 0.3) + '°C';
-            document.getElementById('sim-vpd').innerText = fluctuate(1.45, 0.05);
-            document.getElementById('sim-ec').innerText = fluctuate(4.2, 0.1);
-            document.getElementById('sim-temp-warn').innerText = fluctuate(34.1, 0.5) + '°C';
-            let margin = (65.4 + (Math.random() * 0.2 - 0.1)).toFixed(2);
-            document.getElementById('sim-margin').innerText = margin + '%';
-        }, 2000);
+            let warnTemp = document.getElementById('sim-temp-warn');
+            if (warnTemp) warnTemp.innerText = fluctuate(34.2, 0.4) + '°C';
+            
+            let margin = document.getElementById('sim-margin');
+            if (margin) margin.innerText = (65.4 + (Math.random() * 0.2 - 0.1)).toFixed(2) + '%';
+        }, 2500);
     </script>
 </body>
 </html>

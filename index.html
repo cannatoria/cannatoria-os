@@ -5,22 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cannatoria OS | V6 Clinical</title>
+    <title>Cannatoria OS | V7 Clinical + Finance</title>
     <style>
         /* Clinical Medical Aesthetic */
         :root { 
-            --medical-bg: #0f172a; /* Deep Slate */
-            --medical-card: #1e293b; /* Lighter Slate */
-            --medical-teal: #14b8a6; /* Surgical Teal */
-            --text-main: #f8fafc;
-            --text-sub: #94a3b8;
-            --border: #334155;
-            --danger: #ef4444;
-            --warning: #f59e0b;
+            --medical-bg: #0f172a; --medical-card: #1e293b; --medical-teal: #14b8a6; 
+            --text-main: #f8fafc; --text-sub: #94a3b8; --border: #334155;
+            --danger: #ef4444; --warning: #f59e0b;
         }
         body { font-family: -apple-system, sans-serif; background: var(--medical-bg); color: var(--text-main); margin: 0; padding: 0; user-select: none; }
         
-        /* Header */
         .header { padding: 40px 20px 20px; background: var(--medical-bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
         .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--medical-teal); margin-right: 8px; border-radius: 2px; vertical-align: middle; }
         .title { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: 0.5px; }
@@ -33,18 +27,26 @@
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 11px; color: var(--text-sub); margin-bottom: 5px; text-transform: uppercase; font-weight: 600; }
         .input-group input, .input-group select { width: 100%; box-sizing: border-box; background: var(--medical-bg); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 6px; font-size: 14px; outline: none; }
-        .input-group input:focus { border-color: var(--medical-teal); }
+        .input-inline { background: var(--medical-bg); border: 1px solid var(--border); color: #fff; padding: 6px; width: 80px; text-align: right; border-radius: 4px; font-family: monospace; font-size: 14px; }
+        
         .btn { width: 100%; background: var(--medical-teal); color: #0f172a; border: none; padding: 15px; border-radius: 6px; font-size: 14px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
         .btn-action { width: 100%; padding: 12px; font-size: 11px; font-weight: bold; border-radius: 4px; margin-top: 10px; border: none; cursor: pointer; text-transform: uppercase; background: var(--medical-bg); border: 1px solid var(--border); color: var(--text-main); }
-        
+        .btn-edit { background: transparent; border: 1px solid var(--medical-teal); color: var(--medical-teal); padding: 6px 12px; font-size: 10px; border-radius: 4px; cursor: pointer; float: right; margin-top: -5px; font-weight: bold; }
+
         /* Cards & UI */
         .card { background: var(--medical-card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .section-title { font-size: 12px; text-transform: uppercase; color: var(--text-sub); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin: 25px 0 15px 0; font-weight: 700; letter-spacing: 1px; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #0f172a; background: var(--text-sub); }
         .flex-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
         .flex-row:last-child { border: none; padding-bottom: 0; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #0f172a; background: var(--text-sub); }
+        
+        /* Financial Table */
+        .cogs-table { width: 100%; font-size: 13px; margin-top: 15px; border-collapse: collapse; }
+        .cogs-table td { padding: 10px 0; border-bottom: 1px solid var(--border); color: var(--text-main); }
+        .cogs-table tr:last-child td { border-bottom: none; font-weight: bold; font-size: 15px; color: var(--medical-teal); }
+        .val-td { text-align: right; font-family: monospace; }
 
-        /* Task Manager (Operator Menu) */
+        /* Task Manager */
         .task-item { background: var(--medical-bg); border: 1px solid var(--border); border-radius: 6px; padding: 15px; margin-bottom: 10px; display: flex; align-items: flex-start; gap: 15px; }
         .task-box { width: 22px; height: 22px; border: 2px solid var(--text-sub); border-radius: 4px; cursor: pointer; flex-shrink: 0; margin-top: 2px; }
         .task-box.done { background: var(--medical-teal); border-color: var(--medical-teal); position: relative; }
@@ -55,7 +57,7 @@
         .task-note { font-size: 11px; color: var(--text-sub); background: rgba(0,0,0,0.2); padding: 6px; border-radius: 4px; border-left: 2px solid var(--medical-teal); margin-top: 5px; }
         .priority-badge { font-size: 9px; padding: 2px 6px; border-radius: 3px; font-weight: bold; text-transform: uppercase; background: var(--danger); color: #fff; margin-bottom: 5px; display: inline-block; }
 
-        /* Master Pipeline Visuals */
+        /* Pipeline Visuals */
         .pipeline-tracker { margin-top: 15px; background: var(--medical-bg); border-radius: 6px; padding: 15px; border: 1px solid var(--border); }
         .step-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 8px; }
         .step-line { position: absolute; top: 6px; left: 10px; right: 10px; height: 2px; background: var(--border); z-index: 1; }
@@ -81,30 +83,61 @@
     <div id="view-login" class="view active">
         <div class="card" style="margin-top: 40px; border-top: 4px solid var(--medical-teal);">
             <h2 style="margin-top: 0; margin-bottom: 5px; color: var(--text-main);">Clinical Access</h2>
-            <p style="font-size: 12px; color: var(--text-sub); margin-bottom: 20px;">Enter credentials to access facility operations.</p>
             <div class="input-group"><label>Assigned ID</label><input type="text" id="username" autocapitalize="none"></div>
             <div class="input-group"><label>Security PIN</label><input type="password" id="password"></div>
             <button class="btn" onclick="attemptLogin()">Authorize</button>
             <div id="login-error" style="color: var(--danger); font-size: 12px; margin-top: 10px; display: none; text-align: center; font-weight: bold;">Authorization Failed.</div>
         </div>
-        <button onclick="resetData()" style="width: 100%; background: none; border: none; color: var(--text-sub); font-size: 10px; text-decoration: underline; margin-top: 20px;">Reset Demo Database</button>
+        <button onclick="resetData()" style="width: 100%; background: none; border: none; color: var(--text-sub); font-size: 10px; text-decoration: underline; margin-top: 20px;">Reset Database</button>
     </div>
 
     <div id="view-owner" class="view">
         <div class="card" style="border-left: 4px solid var(--medical-teal);">
-            <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; margin-bottom: 5px; font-weight: bold;">Executive Summary</div>
-            <div style="font-size: 24px; font-weight: bold;">Master Facility Roadmap</div>
-            <div style="font-size: 12px; color: var(--text-sub); margin-top: 5px;">Every batch timeline locked to exact calendar dates. Target $647/kg active.</div>
+            <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; margin-bottom: 5px; font-weight: bold;">System Output</div>
+            <div style="font-size: 32px; font-weight: bold; color: var(--medical-teal);" id="cogs-per-kg">$0</div>
+            <div style="font-size: 12px; color: var(--text-main); margin-top: 5px;">Calculated COGS per Kilogram</div>
         </div>
-        <div class="section-title">Live Pipeline Telemetry</div>
+
+        <div class="card">
+            <div style="font-size: 12px; text-transform: uppercase; color: var(--text-sub); font-weight: bold; display: inline-block;">Monthly Operational Expenses</div>
+            <button class="btn-edit" onclick="toggleEditCOGS()" id="edit-btn">Edit Costs</button>
+            
+            <table class="cogs-table">
+                <tr>
+                    <td>Seasonal Labor</td>
+                    <td class="val-td">$<span id="val-labor">0</span> <input type="number" id="inp-labor" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Nutrients & Inputs</td>
+                    <td class="val-td">$<span id="val-nutes">0</span> <input type="number" id="inp-nutes" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Power & Utilities</td>
+                    <td class="val-td">$<span id="val-power">0</span> <input type="number" id="inp-power" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Overhead / Misc</td>
+                    <td class="val-td">$<span id="val-misc">0</span> <input type="number" id="inp-misc" class="input-inline" style="display:none;"></td>
+                </tr>
+                <tr>
+                    <td>Total Monthly Spend</td>
+                    <td class="val-td">$<span id="val-total-monthly">0</span></td>
+                </tr>
+            </table>
+            <div style="margin-top: 15px; font-size: 11px; color: var(--text-sub); border-top: 1px solid var(--border); padding-top: 10px;">
+                Calculated against a projected facility yield of <span style="color: var(--text-main); font-weight: bold;">83.3 kg</span> per month (1,000 kg annual target).
+            </div>
+        </div>
+
+        <div class="section-title">Master Facility Roadmap</div>
         <div id="owner-pipeline-list"></div>
     </div>
 
     <div id="view-tech" class="view">
         <div class="section-title">Operator Delegation (Push to Floor)</div>
         <div class="card" style="border: 1px solid var(--medical-teal);">
-            <div class="input-group"><input type="text" id="task-title" placeholder="Main Task (e.g., Defoliate Flower 2)"></div>
-            <div class="input-group"><input type="text" id="task-note" placeholder="Optional Note (e.g., Strip bottom 3 nodes only)"></div>
+            <div class="input-group"><input type="text" id="task-title" placeholder="Main Task (e.g., Mix Nutrient Tank A)"></div>
+            <div class="input-group"><input type="text" id="task-note" placeholder="Optional Note (e.g., pH target 5.8)"></div>
             <div style="display: flex; gap: 10px;">
                 <select id="task-priority" style="flex: 1; padding: 12px; font-size: 12px; background: var(--medical-bg); color: var(--text-main); border: 1px solid var(--border); border-radius: 6px;">
                     <option value="normal">Standard Priority</option>
@@ -131,7 +164,7 @@
 
     <script>
         // --- CALENDAR ENGINE ---
-        const systemDate = new Date(); // Real date
+        const systemDate = new Date(); 
         function formatDate(dateObj) { return new Date(dateObj).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
         function addDays(dateObj, days) { let d = new Date(dateObj); d.setDate(d.getDate() + days); return d; }
         function getDaysBetween(targetDate) { return Math.ceil((new Date(targetDate) - systemDate) / (1000 * 60 * 60 * 24)); }
@@ -140,6 +173,7 @@
         let db = {
             currentUser: null,
             nextBatchNum: 9,
+            financials: { laborMonthly: 10000, nutesMonthly: 7900, powerMonthly: 36000, miscMonthly: 2000 },
             tasks: [
                 { id: 1, title: "Reservoir Swap: Veg Room", note: "Mix to 2.2 EC, pH 5.8.", priority: "high", done: false },
                 { id: 2, title: "Sanitize Corridor A", note: "", priority: "normal", done: false }
@@ -157,7 +191,7 @@
         };
 
         function initApp() {
-            const saved = localStorage.getItem('cannatoriaV6');
+            const saved = localStorage.getItem('cannatoriaV7');
             if (saved) { db = JSON.parse(saved); db.rooms.forEach(r => { if(r.startDate) r.startDate = new Date(r.startDate); }); }
             if (db.currentUser === 'boss') { routeOwner(); }
             else if (db.currentUser === 'crew') { routeTech(); }
@@ -165,8 +199,8 @@
             else { showView('login', 'System Access'); }
         }
 
-        function saveData() { localStorage.setItem('cannatoriaV6', JSON.stringify(db)); }
-        function resetData() { localStorage.removeItem('cannatoriaV6'); alert("Database Cleared."); location.reload(); }
+        function saveData() { localStorage.setItem('cannatoriaV7', JSON.stringify(db)); }
+        function resetData() { localStorage.removeItem('cannatoriaV7'); alert("Database Cleared."); location.reload(); }
 
         // --- AUTH ---
         function attemptLogin() {
@@ -183,116 +217,96 @@
         function routeTech() { renderTech(); showView('tech', 'Consultant Command'); }
         function routeFloor() { renderFloor(); showView('floor', 'Operator Protocols'); }
 
-        // --- TASK MANAGEMENT (CONSULTANT <-> FLOOR) ---
-        function addTask() {
-            let title = document.getElementById('task-title').value;
-            let note = document.getElementById('task-note').value;
-            let priority = document.getElementById('task-priority').value;
-            if (title.trim() === '') return;
+        // --- FINANCE LOGIC (OWNER VIEW) ---
+        let editingCOGS = false;
+        function toggleEditCOGS() {
+            editingCOGS = !editingCOGS;
+            const btn = document.getElementById('edit-btn');
+            if (editingCOGS) {
+                btn.innerText = "Save Costs"; btn.style.color = "var(--medical-teal)";
+                document.getElementById('val-labor').style.display = 'none'; document.getElementById('inp-labor').style.display = 'inline-block'; document.getElementById('inp-labor').value = db.financials.laborMonthly;
+                document.getElementById('val-nutes').style.display = 'none'; document.getElementById('inp-nutes').style.display = 'inline-block'; document.getElementById('inp-nutes').value = db.financials.nutesMonthly;
+                document.getElementById('val-power').style.display = 'none'; document.getElementById('inp-power').style.display = 'inline-block'; document.getElementById('inp-power').value = db.financials.powerMonthly;
+                document.getElementById('val-misc').style.display = 'none'; document.getElementById('inp-misc').style.display = 'inline-block'; document.getElementById('inp-misc').value = db.financials.miscMonthly;
+            } else {
+                btn.innerText = "Edit Costs"; btn.style.color = "var(--medical-teal)";
+                db.financials.laborMonthly = parseFloat(document.getElementById('inp-labor').value) || 0;
+                db.financials.nutesMonthly = parseFloat(document.getElementById('inp-nutes').value) || 0;
+                db.financials.powerMonthly = parseFloat(document.getElementById('inp-power').value) || 0;
+                db.financials.miscMonthly = parseFloat(document.getElementById('inp-misc').value) || 0;
+                saveData(); renderOwner();
+            }
+        }
+
+        function renderOwner() {
+            let labor = db.financials.laborMonthly; let nutes = db.financials.nutesMonthly;
+            let power = db.financials.powerMonthly; let misc = db.financials.miscMonthly;
+            let totalMonthly = labor + nutes + power + misc;
             
-            db.tasks.push({ id: Date.now(), title: title, note: note, priority: priority, done: false });
-            document.getElementById('task-title').value = ''; document.getElementById('task-note').value = '';
-            saveData(); alert("Task pushed to Operator Dashboard.");
+            let monthlyYield = 1000 / 12; // 83.33 kg based on 1 Ton cap.
+            let cogsPerKg = totalMonthly / monthlyYield;
+
+            document.getElementById('cogs-per-kg').innerText = `$${cogsPerKg.toFixed(2)}`;
+            document.getElementById('val-labor').innerText = labor.toLocaleString();
+            document.getElementById('val-nutes').innerText = nutes.toLocaleString();
+            document.getElementById('val-power').innerText = power.toLocaleString();
+            document.getElementById('val-misc').innerText = misc.toLocaleString();
+            document.getElementById('val-total-monthly').innerText = totalMonthly.toLocaleString();
+            
+            document.getElementById('inp-labor').style.display = 'none'; document.getElementById('inp-nutes').style.display = 'none';
+            document.getElementById('inp-power').style.display = 'none'; document.getElementById('inp-misc').style.display = 'none';
+            document.getElementById('val-labor').style.display = 'inline'; document.getElementById('val-nutes').style.display = 'inline';
+            document.getElementById('val-power').style.display = 'inline'; document.getElementById('val-misc').style.display = 'inline';
+
+            let html = '';
+            db.rooms.forEach(r => { if(r.batch) { html += `<div class="card" style="border-left: 3px solid ${r.color};"><div style="font-weight: bold; font-size: 14px; color: ${r.color};">${r.name} <span style="font-size:11px; color:var(--text-main); font-weight:normal;">(${r.plants} Plants)</span></div>${buildPipelineHTML(r)}</div>`; } });
+            document.getElementById('owner-pipeline-list').innerHTML = html;
         }
 
-        function toggleTask(taskId) {
-            let task = db.tasks.find(t => t.id === taskId);
-            if (task) { task.done = !task.done; saveData(); routeFloor(); }
-        }
-
-        function clearCompletedTasks() {
-            db.tasks = db.tasks.filter(t => !t.done);
-            saveData(); routeFloor();
-        }
-
+        // --- TASK MANAGEMENT ---
+        function addTask() { let t = document.getElementById('task-title').value; let n = document.getElementById('task-note').value; let p = document.getElementById('task-priority').value; if (t.trim() === '') return; db.tasks.push({ id: Date.now(), title: t, note: n, priority: p, done: false }); document.getElementById('task-title').value = ''; document.getElementById('task-note').value = ''; saveData(); alert("Task assigned to Floor."); }
+        function toggleTask(taskId) { let task = db.tasks.find(t => t.id === taskId); if (task) { task.done = !task.done; saveData(); routeFloor(); } }
+        function clearCompletedTasks() { db.tasks = db.tasks.filter(t => !t.done); saveData(); routeFloor(); }
         function buildTasksHTML() {
             if (db.tasks.length === 0) return `<div style="color: var(--text-sub); font-size: 12px; font-style: italic; padding: 10px;">No active protocols.</div>`;
-            let html = '';
-            // Sort high priority first
-            let sortedTasks = [...db.tasks].sort((a, b) => (b.priority === 'high') - (a.priority === 'high'));
-            
+            let html = ''; let sortedTasks = [...db.tasks].sort((a, b) => (b.priority === 'high') - (a.priority === 'high'));
             sortedTasks.forEach(t => {
                 let badge = t.priority === 'high' ? `<div class="priority-badge">Urgent</div>` : '';
                 let noteHtml = t.note ? `<div class="task-note">${t.note}</div>` : '';
-                html += `
-                <div class="task-item" ${t.priority === 'high' && !t.done ? 'style="border-color: var(--danger);"' : ''}>
-                    <div class="task-box ${t.done ? 'done' : ''}" onclick="toggleTask(${t.id})"></div>
-                    <div class="task-content">
-                        ${badge}
-                        <div class="task-title ${t.done ? 'done' : ''}">${t.title}</div>
-                        ${noteHtml}
-                    </div>
-                </div>`;
-            });
-            return html;
+                html += `<div class="task-item" ${t.priority === 'high' && !t.done ? 'style="border-color: var(--danger);"' : ''}><div class="task-box ${t.done ? 'done' : ''}" onclick="toggleTask(${t.id})"></div><div class="task-content">${badge}<div class="task-title ${t.done ? 'done' : ''}">${t.title}</div>${noteHtml}</div></div>`;
+            }); return html;
         }
-
         function renderFloor() { document.getElementById('floor-task-list').innerHTML = buildTasksHTML(); }
 
         // --- PIPELINE LOGIC ---
         function buildPipelineHTML(room) {
             let dateClone = room.startDate; let dateVeg = addDays(dateClone, 14); let dateFlower = addDays(dateVeg, 28); let dateHarvest = addDays(dateFlower, 70);
             let now = systemDate; let p1 = 'past', p2 = '', p3 = '', p4 = '';
-            
             if (now >= dateVeg) p2 = 'past'; if (now >= dateFlower) p3 = 'past';
             if (room.type === 'prop') { p1 = 'active'; p2 = ''; }
             if (room.type === 'veg') { p1 = 'past'; p2 = 'active'; }
             if (room.type === 'flower') { p1 = 'past'; p2 = 'past'; p3 = 'active'; }
-
             let targetHarvestDays = getDaysBetween(dateHarvest);
             let alertText = targetHarvestDays <= 14 ? `<span style="color: var(--warning);">Harvest Prep Active</span>` : `${targetHarvestDays} Days to Harvest`;
 
-            return `
-                <div class="flex-row" style="border:none; padding-bottom: 5px;">
-                    <span class="badge" style="background: ${room.color};">${room.batch}</span>
-                    <span style="font-family: monospace; font-size: 12px; font-weight: bold; color: var(--text-main);">${alertText}</span>
-                </div>
-                <div class="pipeline-tracker">
-                    <div class="step-container">
-                        <div class="step-line"></div>
-                        <div class="step-dot ${p1}"></div><div class="step-dot ${p2}"></div><div class="step-dot ${p3}"></div><div class="step-dot ${p4}"></div>
-                    </div>
-                    <div class="step-labels">
-                        <div class="step-label-box">Cloned<br><span class="exact-date">${formatDate(dateClone)}</span></div>
-                        <div class="step-label-box">Veg<br><span class="exact-date">${formatDate(dateVeg)}</span></div>
-                        <div class="step-label-box">Flower<br><span class="exact-date">${formatDate(dateFlower)}</span></div>
-                        <div class="step-label-box" style="color: var(--medical-teal);">Harvest<br><span class="exact-date" style="color: var(--medical-teal);">${formatDate(dateHarvest)}</span></div>
-                    </div>
-                </div>`;
+            return `<div class="flex-row" style="border:none; padding-bottom: 5px;"><span class="badge" style="background: ${room.color};">${room.batch}</span><span style="font-family: monospace; font-size: 12px; font-weight: bold; color: var(--text-main);">${alertText}</span></div><div class="pipeline-tracker"><div class="step-container"><div class="step-line"></div><div class="step-dot ${p1}"></div><div class="step-dot ${p2}"></div><div class="step-dot ${p3}"></div><div class="step-dot ${p4}"></div></div><div class="step-labels"><div class="step-label-box">Cloned<br><span class="exact-date">${formatDate(dateClone)}</span></div><div class="step-label-box">Veg<br><span class="exact-date">${formatDate(dateVeg)}</span></div><div class="step-label-box">Flower<br><span class="exact-date">${formatDate(dateFlower)}</span></div><div class="step-label-box" style="color: var(--medical-teal);">Harvest<br><span class="exact-date" style="color: var(--medical-teal);">${formatDate(dateHarvest)}</span></div></div></div>`;
         }
 
-        // --- OWNER DASHBOARD ---
-        function renderOwner() {
-            let html = '';
-            db.rooms.forEach(r => {
-                if(r.batch) { html += `<div class="card" style="border-left: 3px solid ${r.color};"><div style="font-weight: bold; font-size: 14px; color: ${r.color};">${r.name} <span style="font-size:11px; color:var(--text-main); font-weight:normal;">(${r.plants} Plants)</span></div>${buildPipelineHTML(r)}</div>`; }
-            });
-            document.getElementById('owner-pipeline-list').innerHTML = html;
-        }
-
-        // --- CONSULTANT DASHBOARD ---
         function renderTech() {
             let html = '';
             db.rooms.forEach(r => {
-                html += `<div class="card" style="border-top: 3px solid ${r.batch ? r.color : 'var(--border)'};">
-                    <div class="flex-row" style="border:none; padding:0; margin-bottom:5px;">
-                        <div style="font-weight:bold; font-size:14px; color: ${r.batch ? r.color : 'var(--text-sub)'};">${r.name}</div>
-                        ${r.batch ? `<div style="font-size:11px; color:var(--text-sub);">${r.plants} Plants</div>` : ''}
-                    </div>`;
-                
+                html += `<div class="card" style="border-top: 3px solid ${r.batch ? r.color : 'var(--border)'};"><div class="flex-row" style="border:none; padding:0; margin-bottom:5px;"><div style="font-weight:bold; font-size:14px; color: ${r.batch ? r.color : 'var(--text-sub)'};">${r.name}</div>${r.batch ? `<div style="font-size:11px; color:var(--text-sub);">${r.plants} Plants</div>` : ''}</div>`;
                 if (r.batch) {
                     html += buildPipelineHTML(r);
                     let daysToNextPhase = 0; let actionText = ""; let nextAction = "";
                     if (r.type === 'flower') { daysToNextPhase = getDaysBetween(addDays(r.startDate, 112)); actionText = "Log Harvest & Clear Room"; nextAction = `harvestRoom('${r.id}')`; } 
                     else if (r.type === 'veg') { daysToNextPhase = getDaysBetween(addDays(r.startDate, 42)); actionText = "Execute Flower Flip"; nextAction = `moveBatch('${r.id}', 'flower')`; } 
                     else if (r.type === 'prop') { daysToNextPhase = getDaysBetween(addDays(r.startDate, 14)); actionText = "Transfer to Veg Space"; nextAction = `moveBatch('${r.id}', 'veg')`; }
-
                     let isReady = daysToNextPhase <= 0;
                     html += `<button class="btn-action" style="background: ${isReady ? 'var(--medical-teal)' : 'var(--medical-bg)'}; color: ${isReady ? '#0f172a' : 'var(--text-main)'}; border-color: ${isReady ? 'var(--medical-teal)' : 'var(--border)'};" onclick="${nextAction}">${actionText}</button>`;
                 } else { html += `<div style="color: var(--text-sub); font-size: 11px; font-style: italic;">Cleaned. Awaiting next cycle.</div>`; }
                 html += `</div>`;
-            });
-            document.getElementById('tech-rooms-list').innerHTML = html;
+            }); document.getElementById('tech-rooms-list').innerHTML = html;
         }
 
         // --- ACTIONS ---

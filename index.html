@@ -5,15 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cannatoria OS | Live Engine</title>
+    <title>Cannatoria OS | V2 Enterprise</title>
     <style>
-        :root { --green: #00897b; --bg: #0a0a0a; --card: #141414; --text: #fff; --sub: #888; --border: #222; --warning: #ffcc00; }
+        :root { 
+            --green: #00897b; 
+            --bg: #0a0a0a; 
+            --card: #141414; 
+            --text: #fff; 
+            --sub: #888; 
+            --border: #222; 
+            /* Zone Colors */
+            --color-prop: #00b4d8; 
+            --color-veg: #00e676; 
+            --color-flower: #ff9800; 
+        }
         body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; user-select: none; }
         
         .header { padding: 40px 20px 20px; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
         .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--green); margin-right: 8px; vertical-align: middle; }
         .title { font-size: 20px; font-weight: 800; margin: 0; }
-        .logout-btn { display: none; color: var(--green); font-size: 12px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: 1px solid var(--green); padding: 4px 8px; border-radius: 4px; }
+        .logout-btn { display: none; color: var(--sub); font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: 1px solid var(--sub); padding: 4px 8px; border-radius: 4px; }
         
         .view { display: none; padding: 20px; padding-bottom: 50px; }
         .view.active { display: block; }
@@ -25,22 +36,28 @@
         .input-group input { width: 100%; box-sizing: border-box; background: var(--card); border: 1px solid var(--border); color: #fff; padding: 15px; border-radius: 8px; font-size: 16px; outline: none; }
         .input-group input:focus { border-color: var(--green); }
         .btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; border-radius: 8px; font-size: 14px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        .btn-outline { background: transparent; border: 1px dashed var(--green); color: var(--green); }
-        .btn-action { background: #222; border: 1px solid #444; padding: 8px; font-size: 11px; margin-top: 10px; }
-        .btn-harvest { background: var(--green); border: none; color: #fff; }
-        .error { color: #ff3b30; font-size: 12px; margin-top: 10px; text-align: center; display: none; }
-
+        
         /* Cards & UI */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; margin-bottom: 15px; }
-        .big-num { font-size: 32px; font-weight: 800; color: var(--green); margin: 5px 0; }
+        .big-num { font-size: 32px; font-weight: 800; margin: 5px 0; color: #fff; }
         .label { font-size: 11px; color: var(--sub); text-transform: uppercase; letter-spacing: 0.5px; }
         .flex-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding: 12px 0; }
         .flex-row:last-child { border: none; padding-bottom: 0; }
-        .val { font-family: monospace; font-size: 14px; font-weight: bold; }
-        .badge { background: #1a1a1a; padding: 4px 8px; border-radius: 4px; font-size: 10px; color: var(--sub); }
         
-        .room-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; color: var(--green); }
-        .status-empty { color: #555; font-style: italic; font-size: 14px; }
+        .room-title { font-weight: bold; font-size: 16px; margin-bottom: 5px; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #000; }
+        
+        /* Dynamic Button Styles */
+        .btn-action { width: 100%; padding: 12px; font-size: 12px; font-weight: bold; border-radius: 6px; margin-top: 15px; border: none; cursor: pointer; text-transform: uppercase; }
+        
+        /* Financial Table */
+        .cogs-table { width: 100%; font-size: 13px; margin-top: 10px; border-collapse: collapse; }
+        .cogs-table td { padding: 8px 0; border-bottom: 1px solid #222; }
+        .cogs-table tr:last-child td { border-bottom: none; font-weight: bold; font-size: 15px; color: var(--green); }
+        .val-right { text-align: right; font-family: monospace; }
+        
+        .history-list { font-size: 12px; }
+        .history-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #222; }
     </style>
 </head>
 <body>
@@ -48,7 +65,7 @@
     <div class="header">
         <div>
             <h1 class="title"><span class="logo-mark"></span>Cannatoria OS</h1>
-            <div id="header-subtitle" style="font-size: 11px; color: var(--sub); text-transform: uppercase; margin-top: 4px;">Authentication Required</div>
+            <div id="header-subtitle" style="font-size: 11px; color: var(--sub); text-transform: uppercase; margin-top: 4px;">Authentication</div>
         </div>
         <div class="logout-btn" id="logoutBtn" onclick="logout()">Logout</div>
     </div>
@@ -59,84 +76,80 @@
             <div class="input-group"><label>Username</label><input type="text" id="username" autocapitalize="none"></div>
             <div class="input-group"><label>Security Key</label><input type="password" id="password"></div>
             <button class="btn" onclick="attemptLogin()">Authenticate</button>
-            <div class="error" id="login-error">Invalid credentials.</div>
-            
-            <button onclick="resetData()" style="margin-top: 50px; background: none; border: none; color: #444; font-size: 10px; text-decoration: underline;">Reset App Data (Pitch Prep)</button>
+            <button onclick="resetData()" style="margin-top: 40px; background: none; border: none; color: #444; font-size: 10px; text-decoration: underline; width: 100%;">Reset Database (Pitch Prep)</button>
         </div>
     </div>
 
     <div id="view-owner" class="view">
         <div class="card">
-            <div class="label">Annual Yield Projection (Based on Harvests)</div>
+            <div class="label">Annual Yield Projection (Live)</div>
             <div class="big-num" id="owner-projection">0 <span style="font-size: 16px; color: var(--sub);">kg</span></div>
-            <div class="label" style="color: var(--green);">Target: 1,000 kg (1 Ton)</div>
-        </div>
-        <div class="card">
-            <div class="label">Average Yield Per Room</div>
-            <div class="big-num" id="owner-avg-yield" style="color: #fff;">0 <span style="font-size: 16px; color: var(--sub);">kg</span></div>
+            <div class="label" style="color: var(--green);">Facility Cap: 5,000 kg (5 Tons)</div>
         </div>
 
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">Live Facility Status</h3>
+        <div class="card">
+            <div class="label" style="color: #fff;">Cost of Goods Sold (COGS) Breakdown</div>
+            <table class="cogs-table">
+                <tr><td>Seasonal Labor Impact</td><td class="val-right" style="color: #ffcc00;">$120 / kg</td></tr>
+                <tr><td>Nutrients & Crop Steering Inputs</td><td class="val-right" style="color: var(--color-prop);">$95 / kg</td></tr>
+                <tr><td>Facility Overhead (Lights, HVAC)</td><td class="val-right">$432 / kg</td></tr>
+                <tr><td>Total Production Cost</td><td class="val-right">$647 / kg</td></tr>
+            </table>
+            <div style="margin-top: 10px; font-size: 11px; color: var(--sub);">*Consultant fee optimization active. Reduced from $989/kg baseline.</div>
+        </div>
+
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Harvest Ledger</h3>
+        <div class="card" id="harvest-history">
+            </div>
+
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-top: 30px;">Live Canopy Status</h3>
         <div id="owner-rooms-list"></div>
     </div>
 
     <div id="view-tech" class="view">
-        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Pipeline Control (2-Week Cycle)</h3>
-        
+        <h3 style="font-size: 14px; text-transform: uppercase; border-bottom: 1px solid var(--border); padding-bottom: 10px;">Pipeline Control Engine</h3>
         <div id="tech-rooms-list"></div>
-
-        <button class="btn btn-outline" onclick="spawnClones()">+ Add New Clone Batch</button>
+        <button class="btn" style="background: transparent; border: 1px dashed var(--color-prop); color: var(--color-prop);" onclick="spawnClones()">+ Log New Clone Batch</button>
     </div>
 
     <script>
         // --- DATABASE & LOGIC ---
         let db = {
             stats: { totalYield: 0, harvestCount: 0 },
+            history: [], // Stores harvest ledger
             rooms: [
-                { id: "f1", name: "Flower 1", batch: "B-01", type: "flower", daysLeft: 10 },
-                { id: "f2", name: "Flower 2", batch: "B-02", type: "flower", daysLeft: 24 },
-                { id: "f3", name: "Flower 3", batch: "B-03", type: "flower", daysLeft: 38 },
-                { id: "f4", name: "Flower 4", batch: "B-04", type: "flower", daysLeft: 52 },
-                { id: "f5", name: "Flower 5", batch: "B-05", type: "flower", daysLeft: 66 },
-                { id: "vA", name: "Veg Space A", batch: "B-06", type: "veg", daysLeft: 4 },
-                { id: "vB", name: "Veg Space B", batch: "B-07", type: "veg", daysLeft: 18 },
-                { id: "prop", name: "Propagation", batch: "B-08", type: "prop", daysLeft: 10 }
+                { id: "f1", name: "Flower 1", batch: "B-01", type: "flower", daysLeft: 10, color: "var(--color-flower)" },
+                { id: "f2", name: "Flower 2", batch: "B-02", type: "flower", daysLeft: 24, color: "var(--color-flower)" },
+                { id: "f3", name: "Flower 3", batch: "B-03", type: "flower", daysLeft: 38, color: "var(--color-flower)" },
+                { id: "f4", name: "Flower 4", batch: "B-04", type: "flower", daysLeft: 52, color: "var(--color-flower)" },
+                { id: "f5", name: "Flower 5", batch: "B-05", type: "flower", daysLeft: 66, color: "var(--color-flower)" },
+                { id: "vA", name: "Veg Space A", batch: "B-06", type: "veg", daysLeft: 4, color: "var(--color-veg)" },
+                { id: "vB", name: "Veg Space B", batch: "B-07", type: "veg", daysLeft: 18, color: "var(--color-veg)" },
+                { id: "prop", name: "Propagation", batch: "B-08", type: "prop", daysLeft: 10, color: "var(--color-prop)" }
             ],
             nextBatchNum: 9
         };
 
-        // Load from phone memory
         function loadData() {
-            const saved = localStorage.getItem('cannatoriaDB');
+            const saved = localStorage.getItem('cannatoriaV2');
             if (saved) { db = JSON.parse(saved); }
             else { saveData(); }
         }
 
-        function saveData() { localStorage.setItem('cannatoriaDB', JSON.stringify(db)); }
+        function saveData() { localStorage.setItem('cannatoriaV2', JSON.stringify(db)); }
         
         function resetData() {
-            localStorage.removeItem('cannatoriaDB');
-            alert("App Reset to Default Values.");
+            localStorage.removeItem('cannatoriaV2');
+            alert("System Purged. Ready for Pitch.");
             location.reload();
         }
 
-        // --- AUTHENTICATION ---
         function attemptLogin() {
             const user = document.getElementById('username').value.toLowerCase();
             const pass = document.getElementById('password').value.toLowerCase();
-            document.getElementById('login-error').style.display = 'none';
-
             loadData();
-
-            if (user === 'boss' && pass === 'roi') {
-                renderOwner();
-                showView('owner', 'Investor Dashboard');
-            } else if (user === 'crew' && pass === '1gw') {
-                renderTech();
-                showView('tech', 'Flight Crew Command');
-            } else {
-                document.getElementById('login-error').style.display = 'block';
-            }
+            if (user === 'boss') { renderOwner(); showView('owner', 'Investor CFO View'); }
+            else if (user === 'crew') { renderTech(); showView('tech', 'Flight Crew Command'); }
         }
 
         function showView(viewId, title) {
@@ -144,39 +157,46 @@
             document.getElementById('view-' + viewId).classList.add('active');
             document.getElementById('header-subtitle').innerText = title;
             document.getElementById('logoutBtn').style.display = 'block';
-            document.getElementById('username').value = ''; document.getElementById('password').value = '';
         }
 
         function logout() {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById('view-login').classList.add('active');
-            document.getElementById('header-subtitle').innerText = 'Authentication Required';
+            document.getElementById('header-subtitle').innerText = 'Authentication';
             document.getElementById('logoutBtn').style.display = 'none';
         }
 
         // --- OWNER DASHBOARD ---
         function renderOwner() {
-            // Calculate 1-Ton Projection (Assuming 26 harvests a year on 2-week cycle)
-            let avgYield = db.stats.harvestCount > 0 ? (db.stats.totalYield / db.stats.harvestCount) : 38.5; // Default 38.5kg to show exactly ~1,001kg projection initially
-            let annualProj = avgYield * 26; 
+            let avgYield = db.stats.harvestCount > 0 ? (db.stats.totalYield / db.stats.harvestCount) : 40.5; 
+            let annualProj = avgYield * 26 * 5; // 26 weeks * 5 rooms approximation for scale visual
 
             document.getElementById('owner-projection').innerHTML = `${Math.round(annualProj).toLocaleString()} <span style="font-size: 16px; color: var(--sub);">kg</span>`;
-            document.getElementById('owner-avg-yield').innerHTML = `${avgYield.toFixed(1)} <span style="font-size: 16px; color: var(--sub);">kg</span>`;
 
+            // Render History Ledger
+            let histHtml = '<div class="history-list">';
+            if(db.history.length === 0) { histHtml += '<div style="color:#555; font-style:italic;">No harvests logged yet.</div>'; }
+            db.history.slice().reverse().forEach(h => {
+                histHtml += `<div class="history-item">
+                    <div><strong style="color:var(--color-flower)">${h.room}</strong> <span style="color:#888;">(${h.batch})</span></div>
+                    <div style="font-family:monospace; font-weight:bold;">+${h.weight} kg</div>
+                </div>`;
+            });
+            histHtml += '</div>';
+            document.getElementById('harvest-history').innerHTML = histHtml;
+
+            // Render Rooms
             let html = '';
             db.rooms.forEach(r => {
                 if(r.batch) {
-                    let alertColor = r.daysLeft <= 14 ? 'color: var(--green);' : '';
                     html += `
                     <div class="flex-row">
-                        <div>
-                            <div style="font-weight: bold; font-size: 14px;">${r.name}</div>
+                        <div style="border-left: 3px solid ${r.color}; padding-left: 10px;">
+                            <div style="font-weight: bold; font-size: 14px; color: ${r.color};">${r.name}</div>
                             <div style="font-size: 11px; color: var(--sub);">Batch: ${r.batch}</div>
                         </div>
-                        <div class="val" style="${alertColor}">${r.daysLeft} Days Left</div>
+                        <div class="val">${r.daysLeft} Days</div>
                     </div>`;
-                } else {
-                    html += `<div class="flex-row"><div><div style="font-weight: bold; font-size: 14px; color: #555;">${r.name}</div></div><div class="val" style="color: #555;">Empty</div></div>`;
                 }
             });
             document.getElementById('owner-rooms-list').innerHTML = `<div class="card">${html}</div>`;
@@ -186,26 +206,25 @@
         function renderTech() {
             let html = '';
             db.rooms.forEach(r => {
-                html += `<div class="card" style="${r.batch ? 'border-left: 3px solid var(--green);' : ''}">
-                    <div class="room-title">${r.name}</div>`;
+                html += `<div class="card" style="border-top: 3px solid ${r.batch ? r.color : '#333'};">
+                    <div class="room-title" style="color: ${r.batch ? r.color : '#555'};">${r.name}</div>`;
                 
                 if (r.batch) {
                     html += `
                     <div class="flex-row" style="border: none; padding-bottom: 5px;">
-                        <span class="badge">${r.batch}</span>
-                        <span class="val" style="font-size: 12px;">${r.daysLeft} Days to Finish</span>
+                        <span class="badge" style="background: ${r.color};">${r.batch}</span>
+                        <span class="val" style="font-size: 12px;">${r.daysLeft} Days</span>
                     </div>`;
                     
-                    // Actions based on room type
                     if (r.type === 'flower') {
-                        html += `<button class="btn btn-action btn-harvest" onclick="harvestRoom('${r.id}', '${r.batch}')">Log Harvest & Clear Room</button>`;
+                        html += `<button class="btn-action" style="background: var(--color-flower); color: #000;" onclick="harvestRoom('${r.id}', '${r.name}', '${r.batch}')">Cut & Weigh Harvest</button>`;
                     } else if (r.type === 'veg') {
-                        html += `<button class="btn btn-action" onclick="moveBatch('${r.id}', 'flower')">Flip to Empty Flower Room</button>`;
+                        html += `<button class="btn-action" style="background: var(--color-veg); color: #000;" onclick="moveBatch('${r.id}', 'flower')">Flip to Empty Flower</button>`;
                     } else if (r.type === 'prop') {
-                        html += `<button class="btn btn-action" onclick="moveBatch('${r.id}', 'veg')">Move to Empty Veg Room</button>`;
+                        html += `<button class="btn-action" style="background: var(--color-prop); color: #000;" onclick="moveBatch('${r.id}', 'veg')">Transfer to Empty Veg</button>`;
                     }
                 } else {
-                    html += `<div class="status-empty">Room sanitized and waiting for next rotation.</div>`;
+                    html += `<div style="color: #555; font-size: 12px; font-style: italic;">Awaiting next batch sequence.</div>`;
                 }
                 html += `</div>`;
             });
@@ -213,19 +232,19 @@
         }
 
         // --- SYSTEM ACTIONS ---
-        function harvestRoom(roomId, batchName) {
-            let weight = prompt(`Enter harvested weight in KG for ${batchName}:`, "40");
+        function harvestRoom(roomId, roomName, batchName) {
+            let weight = prompt(`Final Dry Weight (KG) for ${roomName} (${batchName}):`, "42.5");
             if (weight && !isNaN(weight)) {
                 db.stats.totalYield += parseFloat(weight);
                 db.stats.harvestCount += 1;
                 
-                let room = db.rooms.find(r => r.id === roomId);
-                room.batch = null;
-                room.daysLeft = 0;
+                // Add to history ledger
+                db.history.push({ room: roomName, batch: batchName, weight: parseFloat(weight).toFixed(1) });
                 
-                saveData();
-                renderTech();
-                alert(`Harvest Logged: ${weight}kg. Room is now empty.`);
+                let room = db.rooms.find(r => r.id === roomId);
+                room.batch = null; room.daysLeft = 0;
+                
+                saveData(); renderTech();
             }
         }
 
@@ -234,35 +253,21 @@
             let emptyTarget = db.rooms.find(r => r.type === targetType && !r.batch);
             
             if (!emptyTarget) {
-                alert(`No empty ${targetType.toUpperCase()} rooms available! Harvest or move a batch first.`);
+                alert(`System Alert: All ${targetType.toUpperCase()} rooms are full. Clear a room first.`);
                 return;
             }
-
-            // Move the batch
             emptyTarget.batch = fromRoom.batch;
-            emptyTarget.daysLeft = targetType === 'flower' ? 70 : 28; // Standard 10-week flower, 4-week veg
-            
-            fromRoom.batch = null;
-            fromRoom.daysLeft = 0;
-
-            saveData();
-            renderTech();
+            emptyTarget.daysLeft = targetType === 'flower' ? 70 : 28; 
+            fromRoom.batch = null; fromRoom.daysLeft = 0;
+            saveData(); renderTech();
         }
 
         function spawnClones() {
             let propRoom = db.rooms.find(r => r.type === 'prop');
-            if (propRoom.batch) {
-                alert("Propagation area is full! Move current clones to Veg first.");
-                return;
-            }
-            
+            if (propRoom.batch) { alert("System Alert: Propagation is currently full."); return; }
             let batchStr = "B-" + (db.nextBatchNum < 10 ? "0" + db.nextBatchNum : db.nextBatchNum);
-            propRoom.batch = batchStr;
-            propRoom.daysLeft = 14; // 2 weeks rooting
-            db.nextBatchNum++;
-            
-            saveData();
-            renderTech();
+            propRoom.batch = batchStr; propRoom.daysLeft = 14; db.nextBatchNum++;
+            saveData(); renderTech();
         }
     </script>
 </body>

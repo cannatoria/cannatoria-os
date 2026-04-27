@@ -5,42 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cannatoria OS | Enterprise Core</title>
+    <title>Cannatoria OS | V11 Elite</title>
     <style>
-        /* Enterprise Aesthetic: Slate, Teal, Crisp Geometry */
+        /* Clinical Slate Aesthetic */
         :root { 
             --bg: #0f172a; --surface: #1e293b; --primary: #14b8a6; 
             --text-high: #f8fafc; --text-med: #cbd5e1; --text-low: #64748b; 
             --border: #334155; --danger: #ef4444; --warning: #f59e0b; --success: #10b981; 
         }
         * { box-sizing: border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text-high); margin: 0; padding: 0; user-select: none; padding-bottom: 90px; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text-high); margin: 0; padding: 0; user-select: none; padding-bottom: 90px; }
         
-        /* App Bar */
         .app-bar { padding: 45px 20px 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
         .brand { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
         .brand-icon { width: 16px; height: 16px; background: var(--primary); border-radius: 3px; }
         .logout-btn { display: none; color: var(--text-med); font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
         
-        /* Views */
         .view { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* UI Primitives */
         .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
         .section-header { font-size: 11px; text-transform: uppercase; color: var(--text-low); font-weight: 700; letter-spacing: 1px; margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
         .input-group { margin-bottom: 16px; }
-        .input-group input, .input-group select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text-high); padding: 14px; border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .input-group input, .input-group select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text-high); padding: 14px; border-radius: 8px; font-size: 15px; outline: none; }
         .input-group input:focus { border-color: var(--primary); }
         .input-inline { background: var(--bg); border: 1px solid var(--border); color: var(--text-high); padding: 8px; width: 100px; text-align: right; border-radius: 6px; font-family: monospace; font-size: 14px; }
-        .btn { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: opacity 0.2s; }
-        .btn:active { opacity: 0.8; }
+        .btn { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
         .btn-outline { background: transparent; border: 1px dashed var(--primary); color: var(--primary); }
         .btn-text { background: transparent; border: none; color: var(--primary); font-size: 12px; font-weight: 600; padding: 0; cursor: pointer; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-        /* Finance Table */
         .finance-table { width: 100%; font-size: 14px; border-collapse: collapse; }
         .finance-table td { padding: 12px 0; border-bottom: 1px solid var(--border); }
         .finance-table tr:last-child td { border-bottom: none; font-weight: 700; font-size: 16px; color: var(--primary); }
@@ -57,17 +52,17 @@
         .tl-date { font-family: monospace; font-size: 12px; font-weight: 700; text-align: right; }
         .tl-sub { font-size: 10px; color: var(--text-low); display: block; margin-top: 2px; font-weight: 400; }
 
-        /* Task System */
         .task-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; gap: 16px; }
         .task-checkbox { width: 24px; height: 24px; border: 2px solid var(--text-low); border-radius: 6px; cursor: pointer; flex-shrink: 0; }
         .task-checkbox.done { background: var(--primary); border-color: var(--primary); position: relative; }
         .task-checkbox.done::after { content: '✓'; position: absolute; color: #000; font-weight: 900; top: 1px; left: 5px; }
 
-        /* Nav Tabs */
         .nav-tabs { display: none; position: fixed; bottom: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); padding: 12px 0 24px; z-index: 100; justify-content: space-around; }
-        .nav-item { color: var(--text-low); font-size: 10px; font-weight: 700; text-transform: uppercase; text-align: center; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .nav-item { color: var(--text-low); font-size: 10px; font-weight: 700; text-transform: uppercase; text-align: center; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--primary); }
         .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -80,18 +75,16 @@
     <div id="view-login" class="view">
         <div class="card" style="margin-top: 10vh; border-top: 4px solid var(--primary);">
             <h2 style="margin: 0 0 8px; font-size: 22px;">Secure Portal</h2>
-            <p style="color: var(--text-low); font-size: 13px; margin-bottom: 24px;">Authorized personnel only.</p>
-            <div class="input-group"><input type="text" id="auth-id" placeholder="Access ID" autocapitalize="none"></div>
-            <div class="input-group"><input type="password" id="auth-pin" placeholder="PIN"></div>
+            <div class="input-group"><input type="text" id="auth-id" placeholder="Access ID (boss, crew, floor)" autocapitalize="none"></div>
+            <div class="input-group"><input type="password" id="auth-pin" placeholder="PIN (roi, 1gw, sop)"></div>
             <button class="btn" onclick="App.login()">Authenticate</button>
             <div id="auth-error" style="color: var(--danger); font-size: 12px; margin-top: 12px; text-align: center; display: none; font-weight: 600;">Invalid Credentials.</div>
         </div>
-        <div style="text-align: center; margin-top: 20px;">
-            <button onclick="App.factoryReset()" style="background:none; border:none; color: var(--border); font-size: 10px;">Sys Reset</button>
-        </div>
+        <button onclick="App.factoryReset()" style="width: 100%; background:none; border:none; color: var(--text-low); font-size: 10px; margin-top: 20px;">Hard Reset Data</button>
     </div>
 
     <div id="view-dash" class="view">
+        
         <div id="dash-boss" style="display:none;">
             <div class="card" style="border-left: 4px solid var(--primary);">
                 <div style="font-size: 11px; color: var(--text-low); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Live Economic Engine</div>
@@ -103,7 +96,6 @@
                 <span>Monthly Overhead Variables</span>
                 <button class="btn-text" onclick="App.toggleFinanceEdit()" id="finance-edit-btn">Edit Variables</button>
             </div>
-            
             <div class="card">
                 <table class="finance-table">
                     <tr><td>Labor Force</td><td class="mono-val">$<span id="f-labor">0</span><input type="number" id="i-labor" class="input-inline" style="display:none;"></td></tr>
@@ -121,13 +113,8 @@
         <div id="dash-crew" style="display:none;">
             <div class="section-header">Operator Floor Directives</div>
             <div class="card" style="border-top: 3px solid var(--warning);">
-                <div class="input-group" style="margin-bottom: 12px;"><input type="text" id="new-task-text" placeholder="Protocol Directive (e.g., Calibrate EC Sensors)"></div>
+                <div class="input-group" style="margin-bottom: 12px;"><input type="text" id="new-task-text" placeholder="Protocol Directive (e.g., Mix Nutrient Tanks)"></div>
                 <button class="btn" style="padding: 12px; font-size: 12px;" onclick="App.assignTask()">Push to Floor App</button>
-            </div>
-            
-            <div class="section-header">Live Telemetry Status</div>
-            <div class="card" style="text-align: center; color: var(--text-low); font-size: 12px; font-style: italic;">
-                Phase 2 IoT Hardware disconnected.<br>Awaiting sensor integration.
             </div>
         </div>
 
@@ -141,14 +128,14 @@
         <div class="flex-between" style="margin-bottom: 20px;">
             <div>
                 <div style="font-size: 22px; font-weight: 800; color: var(--text-high);">Zero-Gap Pipeline</div>
-                <div style="font-size: 12px; color: var(--text-low); margin-top: 4px;">Perpetual 14-Day Cycle Calendar</div>
+                <div style="font-size: 12px; color: var(--text-low); margin-top: 4px;">Hardware auto-routes based on 14-day heartbeat.</div>
             </div>
         </div>
         
         <div id="roadmap-container"></div>
         
         <div id="crew-roadmap-controls" style="display:none; margin-top: 24px;">
-            <button class="btn btn-outline" onclick="App.appendBatch()">+ Log Next Batch Arrival (Auto +14 Days)</button>
+            <button class="btn btn-outline" onclick="App.appendBatch()">+ Log Next Rooted Intake</button>
         </div>
     </div>
 
@@ -158,23 +145,19 @@
     </div>
 
     <script>
-        /**
-         * Cannatoria OS - Core Application Logic
-         * Architected for strict persistence, absolute date math, and clean data flow.
-         */
         const App = {
             state: {
                 user: null,
-                finance: { labor: 12500, nutes: 8500, power: 31000, misc: 3000 },
-                tasks: [{ id: 1, text: "Sanitize Corridor A", done: false }],
+                finance: { labor: 10000, nutes: 7900, power: 36000, misc: 2000 },
+                tasks: [{ id: 1, text: "Prepare 450 pots for Intake", done: false }],
                 batches: []
             },
             
-            // Core Logic: The Anchor Date is set in stone.
-            anchorDate: new Date('2026-04-14T12:00:00Z'),
+            // System Anchors
+            anchorDateStr: '2026-04-14T12:00:00Z', 
             
             init() {
-                const stored = localStorage.getItem('cannatoria_core');
+                const stored = localStorage.getItem('cannatoria_v11');
                 if (stored) {
                     this.state = JSON.parse(stored);
                 } else {
@@ -182,54 +165,36 @@
                     this.save();
                 }
 
-                if (this.state.user) {
-                    this.routeUser(this.state.user);
-                } else {
-                    this.showView('login');
-                }
+                if (this.state.user) { this.routeUser(this.state.user); } 
+                else { this.showView('login'); }
             },
 
-            save() {
-                localStorage.setItem('cannatoria_core', JSON.stringify(this.state));
-            },
-
-            factoryReset() {
-                localStorage.removeItem('cannatoria_core');
-                window.location.reload();
-            },
+            save() { localStorage.setItem('cannatoria_v11', JSON.stringify(this.state)); },
+            factoryReset() { localStorage.removeItem('cannatoria_v11'); window.location.reload(); },
 
             seedInitialBatches() {
-                // Batch 1 (Anchor) -> Apr 14
-                // Batch 2 (+14d)   -> Apr 28
-                // Batch 3 (+28d)   -> May 12
+                // Batch 1 arrived exactly 2 weeks ago
+                // Batch 2 arrives exactly tomorrow
                 this.state.batches = [
-                    { id: "B-01", name: "Flower 1", strain: "Gelato #41", startOffset: 0 },
-                    { id: "B-02", name: "Flower 2", strain: "Wedding Cake", startOffset: 14 },
-                    { id: "B-03", name: "Veg A", strain: "RS-11", startOffset: 28 },
-                    { id: "B-04", name: "Veg B", strain: "Zoap", startOffset: 42 }
+                    { id: "B-01", strain: "Gelato #41", clones: 420, dateOffset: 0 },
+                    { id: "B-02", strain: "Wedding Cake", clones: 450, dateOffset: 14 }
                 ];
             },
 
             login() {
-                const u = document.getElementById('auth-id').value.toLowerCase();
-                const p = document.getElementById('auth-pin').value.toLowerCase();
+                // The .trim() completely prevents the iPhone spacebar bug
+                const u = document.getElementById('auth-id').value.toLowerCase().trim();
+                const p = document.getElementById('auth-pin').value.toLowerCase().trim();
                 
                 if ((u==='boss'&&p==='roi') || (u==='crew'&&p==='1gw') || (u==='floor'&&p==='sop')) {
-                    this.state.user = u;
-                    this.save();
-                    this.routeUser(u);
-                } else {
-                    document.getElementById('auth-error').style.display = 'block';
-                }
+                    this.state.user = u; this.save(); this.routeUser(u);
+                } else { document.getElementById('auth-error').style.display = 'block'; }
             },
 
             logout() {
-                this.state.user = null;
-                this.save();
-                document.getElementById('auth-id').value = '';
-                document.getElementById('auth-pin').value = '';
+                this.state.user = null; this.save();
+                document.getElementById('auth-id').value = ''; document.getElementById('auth-pin').value = '';
                 document.getElementById('auth-error').style.display = 'none';
-                
                 document.getElementById('navTabs').style.display = 'none';
                 document.getElementById('logoutBtn').style.display = 'none';
                 this.showView('login');
@@ -238,176 +203,119 @@
             routeUser(role) {
                 document.getElementById('navTabs').style.display = 'flex';
                 document.getElementById('logoutBtn').style.display = 'block';
-                
                 ['boss', 'crew', 'floor'].forEach(r => document.getElementById(`dash-${r}`).style.display = 'none');
                 document.getElementById(`dash-${role}`).style.display = 'block';
-                
-                // Crew specific roadmap controls
                 document.getElementById('crew-roadmap-controls').style.display = (role === 'crew') ? 'block' : 'none';
 
                 if (role === 'boss') this.renderFinance();
-                if (role === 'floor') this.renderTasks();
+                if (role === 'floor' || role === 'crew') this.renderTasks();
                 this.renderRoadmap();
-                
                 this.switchTab('dash');
             },
 
-            showView(viewId) {
-                document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-                document.getElementById(`view-${viewId}`).classList.add('active');
-            },
+            showView(v) { document.querySelectorAll('.view').forEach(el => el.classList.remove('active')); document.getElementById(`view-${v}`).classList.add('active'); },
+            switchTab(t) { this.showView(t); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); document.getElementById(`tab-${t}`).classList.add('active'); },
 
-            switchTab(tab) {
-                this.showView(tab);
-                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-                document.getElementById(`tab-${tab}`).classList.add('active');
-            },
-
-            // --- FINANCE MODULE (BOSS) ---
+            // --- FINANCE ---
             financeEditMode: false,
             renderFinance() {
-                const f = this.state.finance;
-                const total = f.labor + f.nutes + f.power + f.misc;
-                const cogs = total / 85; // 85kg realistic moving average
-
-                document.getElementById('ui-cogs').innerText = `$${cogs.toFixed(2)}`;
+                const f = this.state.finance; const total = f.labor + f.nutes + f.power + f.misc;
+                document.getElementById('ui-cogs').innerText = `$${(total / 85).toFixed(2)}`;
                 document.getElementById('f-total').innerText = total.toLocaleString();
-
-                ['labor', 'nutes', 'power', 'misc'].forEach(key => {
-                    document.getElementById(`f-${key}`).innerText = f[key].toLocaleString();
-                    document.getElementById(`i-${key}`).value = f[key];
-                });
+                ['labor', 'nutes', 'power', 'misc'].forEach(k => { document.getElementById(`f-${k}`).innerText = f[k].toLocaleString(); document.getElementById(`i-${k}`).value = f[k]; });
             },
-
             toggleFinanceEdit() {
                 this.financeEditMode = !this.financeEditMode;
                 const btn = document.getElementById('finance-edit-btn');
-                
-                ['labor', 'nutes', 'power', 'misc'].forEach(key => {
-                    document.getElementById(`f-${key}`).style.display = this.financeEditMode ? 'none' : 'inline';
-                    document.getElementById(`i-${key}`).style.display = this.financeEditMode ? 'inline-block' : 'none';
+                ['labor', 'nutes', 'power', 'misc'].forEach(k => {
+                    document.getElementById(`f-${k}`).style.display = this.financeEditMode ? 'none' : 'inline';
+                    document.getElementById(`i-${k}`).style.display = this.financeEditMode ? 'inline-block' : 'none';
                 });
-
-                if (this.financeEditMode) {
-                    btn.innerText = "Save Data";
-                } else {
+                if (this.financeEditMode) { btn.innerText = "Save Data"; } 
+                else {
                     btn.innerText = "Edit Variables";
-                    this.state.finance = {
-                        labor: parseFloat(document.getElementById('i-labor').value) || 0,
-                        nutes: parseFloat(document.getElementById('i-nutes').value) || 0,
-                        power: parseFloat(document.getElementById('i-power').value) || 0,
-                        misc: parseFloat(document.getElementById('i-misc').value) || 0
-                    };
-                    this.save();
-                    this.renderFinance();
+                    this.state.finance = { labor: parseFloat(document.getElementById('i-labor').value)||0, nutes: parseFloat(document.getElementById('i-nutes').value)||0, power: parseFloat(document.getElementById('i-power').value)||0, misc: parseFloat(document.getElementById('i-misc').value)||0 };
+                    this.save(); this.renderFinance();
                 }
             },
 
-            // --- TASK MODULE (CREW/FLOOR) ---
+            // --- TASKS ---
             assignTask() {
-                const input = document.getElementById('new-task-text');
-                if (!input.value.trim()) return;
+                const input = document.getElementById('new-task-text'); if (!input.value.trim()) return;
                 this.state.tasks.push({ id: Date.now(), text: input.value, done: false });
-                this.save();
-                input.value = '';
-                alert("Protocol pushed to floor team.");
+                this.save(); input.value = ''; alert("Protocol pushed to floor team.");
             },
-
             toggleTask(id) {
                 const t = this.state.tasks.find(x => x.id === id);
                 if (t) { t.done = !t.done; this.save(); this.renderTasks(); }
             },
-
             renderTasks() {
-                let html = '';
-                if (this.state.tasks.length === 0) {
-                    html = `<div style="color:var(--text-low); font-size:12px; font-style:italic;">No active protocols.</div>`;
-                }
+                let html = this.state.tasks.length === 0 ? `<div style="color:var(--text-low); font-size:12px; font-style:italic;">No active protocols.</div>` : '';
                 this.state.tasks.forEach(t => {
-                    html += `
-                    <div class="task-card">
-                        <div class="task-checkbox ${t.done ? 'done' : ''}" onclick="App.toggleTask(${t.id})"></div>
-                        <div style="flex-grow:1; font-size: 14px; font-weight: 600; color: ${t.done ? 'var(--text-low)' : 'var(--text-high)'}; text-decoration: ${t.done ? 'line-through' : 'none'}; padding-top:2px;">
-                            ${t.text}
-                        </div>
-                    </div>`;
+                    html += `<div class="task-card"><div class="task-checkbox ${t.done ? 'done' : ''}" onclick="App.toggleTask(${t.id})"></div><div style="flex-grow:1; font-size: 14px; font-weight: 600; color: ${t.done ? 'var(--text-low)' : 'var(--text-high)'}; text-decoration: ${t.done ? 'line-through' : 'none'}; padding-top:2px;">${t.text}</div></div>`;
                 });
                 document.getElementById('floor-task-list').innerHTML = html;
             },
 
-            // --- ROADMAP MODULE (ALL) ---
-            calculateDate(offsetDays) {
-                let d = new Date(this.anchorDate);
-                d.setDate(d.getDate() + offsetDays);
-                return d;
-            },
-
-            formatShortDate(dateObj) {
-                return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-            },
-
-            getTimelineRowClass(targetDate) {
-                let today = new Date(); today.setHours(0,0,0,0);
-                let target = new Date(targetDate); target.setHours(0,0,0,0);
+            // --- AUTO-ROUTING ROADMAP ---
+            calculateDate(offsetDays) { let d = new Date(this.anchorDateStr); d.setDate(d.getDate() + offsetDays); return d; },
+            formatDate(dateObj) { return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); },
+            getRowClass(targetDate) {
+                let today = new Date(); today.setHours(0,0,0,0); let target = new Date(targetDate); target.setHours(0,0,0,0);
                 if (target < today) return "tl-row past";
-                if (target.getTime() === today.getTime() || (target > today && target <= new Date(today.getTime() + 7*24*60*60*1000))) return "tl-row active";
+                if (target.getTime() === today.getTime() || (target > today && target <= new Date(today.getTime() + 10*24*60*60*1000))) return "tl-row active";
                 return "tl-row";
             },
 
             appendBatch() {
                 const lastBatch = this.state.batches[this.state.batches.length - 1];
-                const newOffset = lastBatch.startOffset + 14; // Auto +14 days
+                const newOffset = lastBatch.dateOffset + 14; 
                 const num = this.state.batches.length + 1;
                 
-                const strain = prompt(`Enter genetics for Batch B-0${num}:`, "New Strain");
-                if(!strain) return;
+                const strain = prompt(`Enter Genetics for Intake B-0${num}:`, "RS-11");
+                const clones = prompt(`Enter Clone Count:`, "450");
+                if(!strain || !clones) return;
 
-                this.state.batches.push({
-                    id: `B-0${num}`,
-                    name: `Pipeline Slot ${num}`,
-                    strain: strain,
-                    startOffset: newOffset
-                });
-                this.save();
-                this.renderRoadmap();
+                this.state.batches.push({ id: `B-0${num < 10 ? '0'+num : num}`, strain: strain, clones: parseInt(clones), dateOffset: newOffset });
+                this.save(); this.renderRoadmap();
             },
 
             renderRoadmap() {
                 let html = '';
-                this.state.batches.forEach(b => {
-                    const dIntake = this.calculateDate(b.startOffset);
-                    const dHarvest = this.calculateDate(b.startOffset + 98); // 4 wk veg + 10 wk flower = 98 days
-                    const dSanitize = this.calculateDate(b.startOffset + 99); 
-                    const dFill = this.calculateDate(b.startOffset + 100);
+                this.state.batches.forEach((b, index) => {
+                    const dIntake = this.calculateDate(b.dateOffset);
+                    const dVegEnd = this.calculateDate(b.dateOffset + 28);
+                    const dHarvest = this.calculateDate(b.dateOffset + 98); // 4 wk veg + 10 wk flower
+
+                    // Auto-Routing Algorithm
+                    const vegRoom = (index % 2 === 0) ? "Veg A" : "Veg B";
+                    const flowerRoom = `Flower ${(index % 5) + 1}`;
 
                     html += `
                     <div class="card" style="border-top: 3px solid var(--border);">
                         <div class="flex-between">
                             <div>
                                 <div style="font-weight: 800; font-size: 16px; color: var(--text-high);">${b.id} : ${b.strain}</div>
+                                <div style="font-size: 11px; color: var(--text-low); margin-top:2px;">Route: [${vegRoom} → ${flowerRoom}] | ${b.clones} Plants</div>
                             </div>
+                            <span class="badge" style="background: var(--border); color: var(--text-high);">LOCKED</span>
                         </div>
                         
                         <div class="timeline-grid">
-                            <div class="${this.getTimelineRowClass(dIntake)}">
+                            <div class="${this.getRowClass(dIntake)}">
                                 <span class="tl-icon">📥</span>
-                                <div class="tl-content"><div class="tl-title">Rooted Intake (Veg Flip)</div></div>
-                                <span class="tl-date">${this.formatShortDate(dIntake)}<span class="tl-sub">Day 0</span></span>
+                                <div class="tl-content"><div class="tl-title" style="color:var(--success);">Rooted Intake → ${vegRoom}</div></div>
+                                <span class="tl-date">${this.formatDate(dIntake)}<span class="tl-sub">Day 0</span></span>
                             </div>
-                            <div class="${this.getTimelineRowClass(dHarvest)}">
+                            <div class="${this.getRowClass(dVegEnd)}">
+                                <span class="tl-icon">🔄</span>
+                                <div class="tl-content"><div class="tl-title" style="color:var(--primary);">Flip → ${flowerRoom}</div></div>
+                                <span class="tl-date">${this.formatDate(dVegEnd)}<span class="tl-sub">End Wk 4</span></span>
+                            </div>
+                            <div class="${this.getRowClass(dHarvest)}">
                                 <span class="tl-icon">✂️</span>
-                                <div class="tl-content"><div class="tl-title" style="color:var(--danger);">Room Harvest</div></div>
-                                <span class="tl-date" style="color:var(--danger);">${this.formatShortDate(dHarvest)}<span class="tl-sub">Day 98 (Wk 14)</span></span>
-                            </div>
-                            <div class="${this.getTimelineRowClass(dSanitize)}">
-                                <span class="tl-icon">✨</span>
-                                <div class="tl-content"><div class="tl-title" style="color:var(--primary);">Deep Sanitization</div></div>
-                                <span class="tl-date" style="color:var(--primary);">${this.formatShortDate(dSanitize)}<span class="tl-sub">24h Limit</span></span>
-                            </div>
-                            <div class="${this.getTimelineRowClass(dFill)}">
-                                <span class="tl-icon">🌱</span>
-                                <div class="tl-content"><div class="tl-title" style="color:var(--success);">Fill Next Batch</div></div>
-                                <span class="tl-date" style="color:var(--success);">${this.formatShortDate(dFill)}<span class="tl-sub">Zero-Gap Lock</span></span>
+                                <div class="tl-content"><div class="tl-title" style="color:var(--warning);">Room Harvest & Reset</div></div>
+                                <span class="tl-date" style="color:var(--warning);">${this.formatDate(dHarvest)}<span class="tl-sub">End Wk 14</span></span>
                             </div>
                         </div>
                     </div>`;
@@ -416,7 +324,6 @@
             }
         };
 
-        // Boot
         window.onload = () => App.init();
     </script>
 </body>

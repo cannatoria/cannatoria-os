@@ -5,228 +5,419 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cannatoria OS | V10 Master Roadmap</title>
+    <title>Cannatoria OS | Enterprise Core</title>
     <style>
-        /* Clinical Aesthetic */
+        /* Enterprise Aesthetic: Slate, Teal, Crisp Geometry */
         :root { 
-            --bg: #0f172a; --card: #1e293b; --teal: #14b8a6; 
-            --text-main: #f8fafc; --text-sub: #94a3b8; --border: #334155;
-            --danger: #ef4444; --warning: #f59e0b; --success: #10b981; --blue: #0ea5e9;
+            --bg: #0f172a; --surface: #1e293b; --primary: #14b8a6; 
+            --text-high: #f8fafc; --text-med: #cbd5e1; --text-low: #64748b; 
+            --border: #334155; --danger: #ef4444; --warning: #f59e0b; --success: #10b981; 
         }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; user-select: none; padding-bottom: 80px; }
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text-high); margin: 0; padding: 0; user-select: none; padding-bottom: 90px; }
         
-        .header { padding: 40px 20px 20px; background: var(--bg); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
-        .logo-mark { display: inline-block; width: 14px; height: 14px; background: var(--teal); margin-right: 8px; border-radius: 2px; vertical-align: middle; }
-        .title { font-size: 20px; font-weight: 800; margin: 0; letter-spacing: 0.5px; }
-        .logout-btn { display: none; color: var(--teal); font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; border: 1px solid var(--teal); padding: 4px 8px; border-radius: 4px; }
+        /* App Bar */
+        .app-bar { padding: 45px 20px 20px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; }
+        .brand { font-size: 20px; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
+        .brand-icon { width: 16px; height: 16px; background: var(--primary); border-radius: 3px; }
+        .logout-btn { display: none; color: var(--text-med); font-size: 11px; font-weight: 700; text-transform: uppercase; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; }
         
-        .view { display: none; padding: 20px; }
+        /* Views */
+        .view { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .input-group { margin-bottom: 15px; }
-        .input-group input { width: 100%; box-sizing: border-box; background: var(--bg); border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 6px; font-size: 14px; outline: none; }
-        .btn { width: 100%; background: var(--teal); color: #0f172a; border: none; padding: 15px; border-radius: 6px; font-size: 14px; font-weight: bold; margin-top: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        /* UI Primitives */
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .section-header { font-size: 11px; text-transform: uppercase; color: var(--text-low); font-weight: 700; letter-spacing: 1px; margin: 24px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+        .input-group { margin-bottom: 16px; }
+        .input-group input, .input-group select { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text-high); padding: 14px; border-radius: 8px; font-size: 15px; outline: none; transition: border-color 0.2s; }
+        .input-group input:focus { border-color: var(--primary); }
+        .input-inline { background: var(--bg); border: 1px solid var(--border); color: var(--text-high); padding: 8px; width: 100px; text-align: right; border-radius: 6px; font-family: monospace; font-size: 14px; }
+        .btn { width: 100%; background: var(--primary); color: #000; border: none; padding: 16px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: opacity 0.2s; }
+        .btn:active { opacity: 0.8; }
+        .btn-outline { background: transparent; border: 1px dashed var(--primary); color: var(--primary); }
+        .btn-text { background: transparent; border: none; color: var(--primary); font-size: 12px; font-weight: 600; padding: 0; cursor: pointer; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
-        /* Shared Roadmap UI */
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .section-title { font-size: 12px; text-transform: uppercase; color: var(--text-sub); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin: 25px 0 15px 0; font-weight: 700; letter-spacing: 1px; }
-        .flex-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; color: #fff; text-transform: uppercase; }
-        
-        /* Interactive Timeline */
-        .timeline-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 15px; }
-        .tl-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: rgba(0,0,0,0.2); border-radius: 6px; border-left: 3px solid var(--border); }
-        .tl-row.active { border-left-color: var(--teal); background: rgba(20, 184, 166, 0.05); }
-        .tl-row.past { opacity: 0.5; }
-        .tl-icon { font-size: 14px; margin-right: 10px; width: 20px; text-align: center; }
-        .tl-desc { flex-grow: 1; font-size: 12px; font-weight: 600; color: var(--text-main); }
-        .tl-date { font-family: monospace; font-size: 11px; font-weight: bold; text-align: right; }
-        .tl-sub { font-size: 9px; color: var(--text-sub); display: block; margin-top: 2px; font-weight: normal; }
+        /* Finance Table */
+        .finance-table { width: 100%; font-size: 14px; border-collapse: collapse; }
+        .finance-table td { padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .finance-table tr:last-child td { border-bottom: none; font-weight: 700; font-size: 16px; color: var(--primary); }
+        .mono-val { font-family: monospace; text-align: right; }
 
-        /* Navigation Tabs */
-        .nav-tabs { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg); border-top: 1px solid var(--border); padding: 10px 0 20px 0; z-index: 100; justify-content: space-around; }
-        .nav-item { color: var(--text-sub); font-size: 10px; font-weight: bold; text-transform: uppercase; text-align: center; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--teal); }
-        .nav-icon { font-size: 18px; display: block; margin-bottom: 4px; }
+        /* Timeline Tracker */
+        .timeline-grid { margin-top: 16px; border-top: 1px dashed var(--border); padding-top: 16px; display: grid; gap: 12px; }
+        .tl-row { display: flex; align-items: center; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; border-left: 3px solid var(--border); }
+        .tl-row.active { border-left-color: var(--primary); background: rgba(20, 184, 166, 0.05); }
+        .tl-row.past { opacity: 0.4; }
+        .tl-icon { font-size: 16px; width: 24px; text-align: center; margin-right: 12px; }
+        .tl-content { flex-grow: 1; }
+        .tl-title { font-size: 13px; font-weight: 600; color: var(--text-high); }
+        .tl-date { font-family: monospace; font-size: 12px; font-weight: 700; text-align: right; }
+        .tl-sub { font-size: 10px; color: var(--text-low); display: block; margin-top: 2px; font-weight: 400; }
+
+        /* Task System */
+        .task-card { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; gap: 16px; }
+        .task-checkbox { width: 24px; height: 24px; border: 2px solid var(--text-low); border-radius: 6px; cursor: pointer; flex-shrink: 0; }
+        .task-checkbox.done { background: var(--primary); border-color: var(--primary); position: relative; }
+        .task-checkbox.done::after { content: '✓'; position: absolute; color: #000; font-weight: 900; top: 1px; left: 5px; }
+
+        /* Nav Tabs */
+        .nav-tabs { display: none; position: fixed; bottom: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid var(--border); padding: 12px 0 24px; z-index: 100; justify-content: space-around; }
+        .nav-item { color: var(--text-low); font-size: 10px; font-weight: 700; text-transform: uppercase; text-align: center; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 20px; display: block; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <div>
-            <h1 class="title"><span class="logo-mark"></span>Cannatoria OS</h1>
-            <div id="header-subtitle" style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; margin-top: 4px; font-weight: 600;">System Access</div>
-        </div>
-        <div class="logout-btn" id="logoutBtn" onclick="logout()">Logout</div>
+    <div class="app-bar">
+        <div class="brand"><div class="brand-icon"></div> Cannatoria OS</div>
+        <div class="logout-btn" id="logoutBtn" onclick="App.logout()">End Session</div>
     </div>
 
-    <div id="view-login" class="view active">
-        <div class="card" style="margin-top: 40px; border-top: 4px solid var(--teal);">
-            <h2 style="margin-top: 0; margin-bottom: 5px; color: var(--text-main);">Clinical Authentication</h2>
-            <div class="input-group"><input type="text" id="username" placeholder="Assigned ID (boss, crew, floor)" autocapitalize="none"></div>
-            <div class="input-group"><input type="password" id="password" placeholder="Security PIN (roi, 1gw, sop)"></div>
-            <button class="btn" onclick="attemptLogin()">Authorize</button>
+    <div id="view-login" class="view">
+        <div class="card" style="margin-top: 10vh; border-top: 4px solid var(--primary);">
+            <h2 style="margin: 0 0 8px; font-size: 22px;">Secure Portal</h2>
+            <p style="color: var(--text-low); font-size: 13px; margin-bottom: 24px;">Authorized personnel only.</p>
+            <div class="input-group"><input type="text" id="auth-id" placeholder="Access ID" autocapitalize="none"></div>
+            <div class="input-group"><input type="password" id="auth-pin" placeholder="PIN"></div>
+            <button class="btn" onclick="App.login()">Authenticate</button>
+            <div id="auth-error" style="color: var(--danger); font-size: 12px; margin-top: 12px; text-align: center; display: none; font-weight: 600;">Invalid Credentials.</div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="App.factoryReset()" style="background:none; border:none; color: var(--border); font-size: 10px;">Sys Reset</button>
         </div>
     </div>
 
-    <div id="view-dashboard" class="view">
-        <div id="dash-owner" style="display:none;">
-            <div class="card" style="border-left: 4px solid var(--teal);">
-                <div style="font-size: 11px; color: var(--text-sub); text-transform: uppercase; font-weight: bold;">System Output</div>
-                <div style="font-size: 32px; font-weight: bold; color: var(--teal);">$647</div>
-                <div style="font-size: 12px; color: var(--text-main); margin-top: 5px;">Calculated COGS per Kilogram</div>
+    <div id="view-dash" class="view">
+        <div id="dash-boss" style="display:none;">
+            <div class="card" style="border-left: 4px solid var(--primary);">
+                <div style="font-size: 11px; color: var(--text-low); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Live Economic Engine</div>
+                <div style="font-size: 36px; font-weight: 800; color: var(--primary);" id="ui-cogs">$0</div>
+                <div style="font-size: 12px; color: var(--text-med); margin-top: 4px;">Production Cost Per Kilogram</div>
             </div>
-            <p style="font-size: 12px; color: var(--text-sub);">*Financial matrix operating normally. Refer to the Roadmap tab for live facility status and pipeline projections.</p>
+
+            <div class="flex-between section-header">
+                <span>Monthly Overhead Variables</span>
+                <button class="btn-text" onclick="App.toggleFinanceEdit()" id="finance-edit-btn">Edit Variables</button>
+            </div>
+            
+            <div class="card">
+                <table class="finance-table">
+                    <tr><td>Labor Force</td><td class="mono-val">$<span id="f-labor">0</span><input type="number" id="i-labor" class="input-inline" style="display:none;"></td></tr>
+                    <tr><td>Nutrients / Inputs</td><td class="mono-val">$<span id="f-nutes">0</span><input type="number" id="i-nutes" class="input-inline" style="display:none;"></td></tr>
+                    <tr><td>Power / Utilities</td><td class="mono-val">$<span id="f-power">0</span><input type="number" id="i-power" class="input-inline" style="display:none;"></td></tr>
+                    <tr><td>Facility Overhead</td><td class="mono-val">$<span id="f-misc">0</span><input type="number" id="i-misc" class="input-inline" style="display:none;"></td></tr>
+                    <tr><td>Total Monthly Target</td><td class="mono-val">$<span id="f-total">0</span></td></tr>
+                </table>
+                <div style="font-size: 11px; color: var(--text-low); margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                    Algorithm calculates COGS against an <strong style="color:var(--text-high);">85.0 kg/month</strong> rolling average.
+                </div>
+            </div>
         </div>
 
         <div id="dash-crew" style="display:none;">
-            <div class="section-title">Telemetry & Delegation</div>
-            <div class="card">
-                <div style="font-size: 14px; font-weight: bold; margin-bottom: 10px;">Push Directive to Floor Ops</div>
-                <div class="input-group"><input type="text" placeholder="Task Detail (e.g., Mix Tank A)"></div>
-                <button class="btn" style="padding: 10px; font-size: 11px;">Assign Task</button>
+            <div class="section-header">Operator Floor Directives</div>
+            <div class="card" style="border-top: 3px solid var(--warning);">
+                <div class="input-group" style="margin-bottom: 12px;"><input type="text" id="new-task-text" placeholder="Protocol Directive (e.g., Calibrate EC Sensors)"></div>
+                <button class="btn" style="padding: 12px; font-size: 12px;" onclick="App.assignTask()">Push to Floor App</button>
+            </div>
+            
+            <div class="section-header">Live Telemetry Status</div>
+            <div class="card" style="text-align: center; color: var(--text-low); font-size: 12px; font-style: italic;">
+                Phase 2 IoT Hardware disconnected.<br>Awaiting sensor integration.
             </div>
         </div>
 
         <div id="dash-floor" style="display:none;">
-            <div class="section-title">Shift Directives</div>
-            <div class="card" style="border-left: 4px solid var(--warning);">
-                <div style="font-size: 14px; font-weight: bold;">Sanitize Corridor B</div>
-                <div style="font-size: 11px; color: var(--text-sub); margin-top: 4px;">Must attach photo upon completion.</div>
-                <button class="btn" style="padding: 10px; font-size: 11px; margin-top: 10px; background: var(--bg); color: #fff; border: 1px solid var(--border);">📸 Complete</button>
-            </div>
+            <div class="section-header">Active Shift Protocols</div>
+            <div id="floor-task-list"></div>
         </div>
     </div>
 
     <div id="view-roadmap" class="view">
-        <div class="card" style="background: transparent; border: none; padding: 0; box-shadow: none; margin-bottom: 5px;">
-            <div style="font-size: 22px; font-weight: bold; color: var(--text-main);">Zero-Gap Pipeline</div>
-            <div style="font-size: 12px; color: var(--text-sub); margin-top: 5px;">Interactive perpetual timeline. Dates lock automatically upon clone arrival.</div>
+        <div class="flex-between" style="margin-bottom: 20px;">
+            <div>
+                <div style="font-size: 22px; font-weight: 800; color: var(--text-high);">Zero-Gap Pipeline</div>
+                <div style="font-size: 12px; color: var(--text-low); margin-top: 4px;">Perpetual 14-Day Cycle Calendar</div>
+            </div>
         </div>
         
-        <div class="section-title">Active Facility Lifecycle</div>
         <div id="roadmap-container"></div>
+        
+        <div id="crew-roadmap-controls" style="display:none; margin-top: 24px;">
+            <button class="btn btn-outline" onclick="App.appendBatch()">+ Log Next Batch Arrival (Auto +14 Days)</button>
+        </div>
     </div>
 
     <div class="nav-tabs" id="navTabs">
-        <div class="nav-item active" id="tab-dash" onclick="switchTab('dashboard')">
-            <span class="nav-icon">⊞</span> Dashboard
-        </div>
-        <div class="nav-item" id="tab-road" onclick="switchTab('roadmap')">
-            <span class="nav-icon">◷</span> Roadmap
-        </div>
+        <div class="nav-item" id="tab-dash" onclick="App.switchTab('dash')"><span class="nav-icon">⊞</span> Hub</div>
+        <div class="nav-item" id="tab-roadmap" onclick="App.switchTab('roadmap')"><span class="nav-icon">◷</span> Roadmap</div>
     </div>
 
     <script>
-        const systemDate = new Date(); 
-        function formatDate(dateObj) { return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
-        function addDays(dateObj, days) { let d = new Date(dateObj); d.setDate(d.getDate() + days); return d; }
+        /**
+         * Cannatoria OS - Core Application Logic
+         * Architected for strict persistence, absolute date math, and clean data flow.
+         */
+        const App = {
+            state: {
+                user: null,
+                finance: { labor: 12500, nutes: 8500, power: 31000, misc: 3000 },
+                tasks: [{ id: 1, text: "Sanitize Corridor A", done: false }],
+                batches: []
+            },
+            
+            // Core Logic: The Anchor Date is set in stone.
+            anchorDate: new Date('2026-04-14T12:00:00Z'),
+            
+            init() {
+                const stored = localStorage.getItem('cannatoria_core');
+                if (stored) {
+                    this.state = JSON.parse(stored);
+                } else {
+                    this.seedInitialBatches();
+                    this.save();
+                }
 
-        let db = {
-            currentUser: null,
-            rooms: [
-                { id: "f1", name: "Flower 1", batch: "Gelato #41", plants: 420, color: "var(--warning)", startDate: addDays(systemDate, -66) },
-                { id: "f2", name: "Flower 2", batch: "Wedding Cake", plants: 410, color: "var(--warning)", startDate: addDays(systemDate, -52) },
-                { id: "f3", name: "Flower 3", batch: "RS-11", plants: 400, color: "var(--warning)", startDate: addDays(systemDate, -38) },
-                { id: "f4", name: "Flower 4", batch: "Zoap", plants: 450, color: "var(--warning)", startDate: addDays(systemDate, -24) },
-                { id: "f5", name: "Flower 5", batch: "Biscotti", plants: 390, color: "var(--warning)", startDate: addDays(systemDate, -10) }
-            ]
-        };
+                if (this.state.user) {
+                    this.routeUser(this.state.user);
+                } else {
+                    this.showView('login');
+                }
+            },
 
-        function attemptLogin() {
-            const u = document.getElementById('username').value.toLowerCase();
-            const p = document.getElementById('password').value.toLowerCase();
-            if ((u==='boss'&&p==='roi') || (u==='crew'&&p==='1gw') || (u==='floor'&&p==='sop')) {
-                db.currentUser = u; 
+            save() {
+                localStorage.setItem('cannatoria_core', JSON.stringify(this.state));
+            },
+
+            factoryReset() {
+                localStorage.removeItem('cannatoria_core');
+                window.location.reload();
+            },
+
+            seedInitialBatches() {
+                // Batch 1 (Anchor) -> Apr 14
+                // Batch 2 (+14d)   -> Apr 28
+                // Batch 3 (+28d)   -> May 12
+                this.state.batches = [
+                    { id: "B-01", name: "Flower 1", strain: "Gelato #41", startOffset: 0 },
+                    { id: "B-02", name: "Flower 2", strain: "Wedding Cake", startOffset: 14 },
+                    { id: "B-03", name: "Veg A", strain: "RS-11", startOffset: 28 },
+                    { id: "B-04", name: "Veg B", strain: "Zoap", startOffset: 42 }
+                ];
+            },
+
+            login() {
+                const u = document.getElementById('auth-id').value.toLowerCase();
+                const p = document.getElementById('auth-pin').value.toLowerCase();
+                
+                if ((u==='boss'&&p==='roi') || (u==='crew'&&p==='1gw') || (u==='floor'&&p==='sop')) {
+                    this.state.user = u;
+                    this.save();
+                    this.routeUser(u);
+                } else {
+                    document.getElementById('auth-error').style.display = 'block';
+                }
+            },
+
+            logout() {
+                this.state.user = null;
+                this.save();
+                document.getElementById('auth-id').value = '';
+                document.getElementById('auth-pin').value = '';
+                document.getElementById('auth-error').style.display = 'none';
+                
+                document.getElementById('navTabs').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                this.showView('login');
+            },
+
+            routeUser(role) {
                 document.getElementById('navTabs').style.display = 'flex';
                 document.getElementById('logoutBtn').style.display = 'block';
-                document.getElementById('header-subtitle').innerText = u.toUpperCase() + " ACCESS";
                 
-                // Hide all role dashboards, show correct one
-                document.getElementById('dash-owner').style.display = 'none';
-                document.getElementById('dash-crew').style.display = 'none';
-                document.getElementById('dash-floor').style.display = 'none';
-                document.getElementById(`dash-${u === 'boss' ? 'owner' : u}`).style.display = 'block';
+                ['boss', 'crew', 'floor'].forEach(r => document.getElementById(`dash-${r}`).style.display = 'none');
+                document.getElementById(`dash-${role}`).style.display = 'block';
                 
-                buildRoadmap();
-                switchTab('roadmap'); // Default to roadmap view on login
-            } else { alert("Invalid credentials."); }
-        }
+                // Crew specific roadmap controls
+                document.getElementById('crew-roadmap-controls').style.display = (role === 'crew') ? 'block' : 'none';
 
-        function logout() { 
-            db.currentUser = null; 
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active')); 
-            document.getElementById('view-login').classList.add('active'); 
-            document.getElementById('navTabs').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'none';
-            document.getElementById('header-subtitle').innerText = "System Access";
-        }
+                if (role === 'boss') this.renderFinance();
+                if (role === 'floor') this.renderTasks();
+                this.renderRoadmap();
+                
+                this.switchTab('dash');
+            },
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${tabName}`).classList.add('active');
-            if(tabName === 'dashboard') document.getElementById('tab-dash').classList.add('active');
-            if(tabName === 'roadmap') document.getElementById('tab-road').classList.add('active');
-        }
+            showView(viewId) {
+                document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+                document.getElementById(`view-${viewId}`).classList.add('active');
+            },
 
-        // --- INTERACTIVE ROADMAP LOGIC ---
-        function getRowClass(targetDate) {
-            let today = new Date(); today.setHours(0,0,0,0);
-            let target = new Date(targetDate); target.setHours(0,0,0,0);
-            if (target < today) return "tl-row past";
-            if (target.getTime() === today.getTime() || (target > today && target <= addDays(today, 7))) return "tl-row active";
-            return "tl-row";
-        }
+            switchTab(tab) {
+                this.showView(tab);
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                document.getElementById(`tab-${tab}`).classList.add('active');
+            },
 
-        function buildRoadmap() {
-            let html = '';
-            // Sort rooms by harvest date (closest first)
-            let sortedRooms = [...db.rooms].sort((a,b) => a.startDate - b.startDate);
+            // --- FINANCE MODULE (BOSS) ---
+            financeEditMode: false,
+            renderFinance() {
+                const f = this.state.finance;
+                const total = f.labor + f.nutes + f.power + f.misc;
+                const cogs = total / 85; // 85kg realistic moving average
 
-            sortedRooms.forEach(r => {
-                let dIntake = r.startDate;
-                let dHarvest = addDays(dIntake, 70); // 10 weeks
-                let dSanitize = addDays(dHarvest, 1); // 24 hrs later
-                let dFill = addDays(dHarvest, 2); // 48 hrs later
+                document.getElementById('ui-cogs').innerText = `$${cogs.toFixed(2)}`;
+                document.getElementById('f-total').innerText = total.toLocaleString();
 
-                html += `
-                <div class="card" style="border-top: 4px solid ${r.color};">
-                    <div class="flex-row">
-                        <div>
-                            <div style="font-weight: 800; font-size: 16px; color: ${r.color};">${r.name}</div>
-                            <div style="font-size: 11px; color: var(--text-sub); margin-top:2px;">Batch: ${r.batch} | ${r.plants} Clones</div>
+                ['labor', 'nutes', 'power', 'misc'].forEach(key => {
+                    document.getElementById(`f-${key}`).innerText = f[key].toLocaleString();
+                    document.getElementById(`i-${key}`).value = f[key];
+                });
+            },
+
+            toggleFinanceEdit() {
+                this.financeEditMode = !this.financeEditMode;
+                const btn = document.getElementById('finance-edit-btn');
+                
+                ['labor', 'nutes', 'power', 'misc'].forEach(key => {
+                    document.getElementById(`f-${key}`).style.display = this.financeEditMode ? 'none' : 'inline';
+                    document.getElementById(`i-${key}`).style.display = this.financeEditMode ? 'inline-block' : 'none';
+                });
+
+                if (this.financeEditMode) {
+                    btn.innerText = "Save Data";
+                } else {
+                    btn.innerText = "Edit Variables";
+                    this.state.finance = {
+                        labor: parseFloat(document.getElementById('i-labor').value) || 0,
+                        nutes: parseFloat(document.getElementById('i-nutes').value) || 0,
+                        power: parseFloat(document.getElementById('i-power').value) || 0,
+                        misc: parseFloat(document.getElementById('i-misc').value) || 0
+                    };
+                    this.save();
+                    this.renderFinance();
+                }
+            },
+
+            // --- TASK MODULE (CREW/FLOOR) ---
+            assignTask() {
+                const input = document.getElementById('new-task-text');
+                if (!input.value.trim()) return;
+                this.state.tasks.push({ id: Date.now(), text: input.value, done: false });
+                this.save();
+                input.value = '';
+                alert("Protocol pushed to floor team.");
+            },
+
+            toggleTask(id) {
+                const t = this.state.tasks.find(x => x.id === id);
+                if (t) { t.done = !t.done; this.save(); this.renderTasks(); }
+            },
+
+            renderTasks() {
+                let html = '';
+                if (this.state.tasks.length === 0) {
+                    html = `<div style="color:var(--text-low); font-size:12px; font-style:italic;">No active protocols.</div>`;
+                }
+                this.state.tasks.forEach(t => {
+                    html += `
+                    <div class="task-card">
+                        <div class="task-checkbox ${t.done ? 'done' : ''}" onclick="App.toggleTask(${t.id})"></div>
+                        <div style="flex-grow:1; font-size: 14px; font-weight: 600; color: ${t.done ? 'var(--text-low)' : 'var(--text-high)'}; text-decoration: ${t.done ? 'line-through' : 'none'}; padding-top:2px;">
+                            ${t.text}
                         </div>
-                        <span class="badge" style="background: #334155;">Active</span>
-                    </div>
-                    
-                    <div class="timeline-grid">
-                        <div class="${getRowClass(dIntake)}">
-                            <span class="tl-icon">📥</span>
-                            <span class="tl-desc">Clone Arrival / Intake</span>
-                            <span class="tl-date">${formatDate(dIntake)}<span class="tl-sub">Completed</span></span>
-                        </div>
-                        <div class="${getRowClass(dHarvest)}">
-                            <span class="tl-icon">✂️</span>
-                            <span class="tl-desc" style="color: var(--danger);">Room Harvest</span>
-                            <span class="tl-date" style="color: var(--danger);">${formatDate(dHarvest)}<span class="tl-sub">Target Date</span></span>
-                        </div>
-                        <div class="${getRowClass(dSanitize)}">
-                            <span class="tl-icon">✨</span>
-                            <span class="tl-desc" style="color: var(--blue);">Deep Sanitization</span>
-                            <span class="tl-date" style="color: var(--blue);">${formatDate(dSanitize)}<span class="tl-sub">24h Window</span></span>
-                        </div>
-                        <div class="${getRowClass(dFill)}">
-                            <span class="tl-icon">🌱</span>
-                            <span class="tl-desc" style="color: var(--success);">Fill / Flip Next Batch</span>
-                            <span class="tl-date" style="color: var(--success);">${formatDate(dFill)}<span class="tl-sub">Zero-Gap Lock</span></span>
-                        </div>
-                    </div>
-                </div>`;
-            });
-            document.getElementById('roadmap-container').innerHTML = html;
-        }
+                    </div>`;
+                });
+                document.getElementById('floor-task-list').innerHTML = html;
+            },
 
+            // --- ROADMAP MODULE (ALL) ---
+            calculateDate(offsetDays) {
+                let d = new Date(this.anchorDate);
+                d.setDate(d.getDate() + offsetDays);
+                return d;
+            },
+
+            formatShortDate(dateObj) {
+                return dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            },
+
+            getTimelineRowClass(targetDate) {
+                let today = new Date(); today.setHours(0,0,0,0);
+                let target = new Date(targetDate); target.setHours(0,0,0,0);
+                if (target < today) return "tl-row past";
+                if (target.getTime() === today.getTime() || (target > today && target <= new Date(today.getTime() + 7*24*60*60*1000))) return "tl-row active";
+                return "tl-row";
+            },
+
+            appendBatch() {
+                const lastBatch = this.state.batches[this.state.batches.length - 1];
+                const newOffset = lastBatch.startOffset + 14; // Auto +14 days
+                const num = this.state.batches.length + 1;
+                
+                const strain = prompt(`Enter genetics for Batch B-0${num}:`, "New Strain");
+                if(!strain) return;
+
+                this.state.batches.push({
+                    id: `B-0${num}`,
+                    name: `Pipeline Slot ${num}`,
+                    strain: strain,
+                    startOffset: newOffset
+                });
+                this.save();
+                this.renderRoadmap();
+            },
+
+            renderRoadmap() {
+                let html = '';
+                this.state.batches.forEach(b => {
+                    const dIntake = this.calculateDate(b.startOffset);
+                    const dHarvest = this.calculateDate(b.startOffset + 98); // 4 wk veg + 10 wk flower = 98 days
+                    const dSanitize = this.calculateDate(b.startOffset + 99); 
+                    const dFill = this.calculateDate(b.startOffset + 100);
+
+                    html += `
+                    <div class="card" style="border-top: 3px solid var(--border);">
+                        <div class="flex-between">
+                            <div>
+                                <div style="font-weight: 800; font-size: 16px; color: var(--text-high);">${b.id} : ${b.strain}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-grid">
+                            <div class="${this.getTimelineRowClass(dIntake)}">
+                                <span class="tl-icon">📥</span>
+                                <div class="tl-content"><div class="tl-title">Rooted Intake (Veg Flip)</div></div>
+                                <span class="tl-date">${this.formatShortDate(dIntake)}<span class="tl-sub">Day 0</span></span>
+                            </div>
+                            <div class="${this.getTimelineRowClass(dHarvest)}">
+                                <span class="tl-icon">✂️</span>
+                                <div class="tl-content"><div class="tl-title" style="color:var(--danger);">Room Harvest</div></div>
+                                <span class="tl-date" style="color:var(--danger);">${this.formatShortDate(dHarvest)}<span class="tl-sub">Day 98 (Wk 14)</span></span>
+                            </div>
+                            <div class="${this.getTimelineRowClass(dSanitize)}">
+                                <span class="tl-icon">✨</span>
+                                <div class="tl-content"><div class="tl-title" style="color:var(--primary);">Deep Sanitization</div></div>
+                                <span class="tl-date" style="color:var(--primary);">${this.formatShortDate(dSanitize)}<span class="tl-sub">24h Limit</span></span>
+                            </div>
+                            <div class="${this.getTimelineRowClass(dFill)}">
+                                <span class="tl-icon">🌱</span>
+                                <div class="tl-content"><div class="tl-title" style="color:var(--success);">Fill Next Batch</div></div>
+                                <span class="tl-date" style="color:var(--success);">${this.formatShortDate(dFill)}<span class="tl-sub">Zero-Gap Lock</span></span>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+                document.getElementById('roadmap-container').innerHTML = html;
+            }
+        };
+
+        // Boot
+        window.onload = () => App.init();
     </script>
 </body>
 </html>
